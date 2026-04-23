@@ -27,6 +27,25 @@ public class CustomerServiceImpl {
 		}
 		return null;
 	}
+	
+	public Customer getCustomerByName(String name) {
+
+		Optional<Customer> customer = repository.findByName(name);
+		if (customer.isPresent()) {
+			return customer.get();
+		}
+		return null;
+	}
+	
+	public Customer getCustomerByEmail_Phone(String email,String phone) {
+
+		Optional<Customer> customer = repository.findByEmailAndPhone(email,phone);
+		if (customer.isPresent()) {
+			return customer.get();
+		}
+		return null;
+	}
+
 
 	public List<Customer> getAllCustomers() {
 		return repository.findAll();
@@ -37,5 +56,7 @@ public class CustomerServiceImpl {
 		repository.deleteById(id);
 		
 	}
+
+	
 
 }
