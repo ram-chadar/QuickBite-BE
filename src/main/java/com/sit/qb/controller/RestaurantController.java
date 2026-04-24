@@ -1,5 +1,7 @@
 package com.sit.qb.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,5 +37,11 @@ public class RestaurantController {
 		return service.addMenu(menuItem, id);
 
 	}
+	
+	@GetMapping
+	public List<Restaurant> getAllRestaurant() {
+	return	service.getAllRestaurant();
+	}
+	
 
 }
