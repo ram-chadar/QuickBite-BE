@@ -4,14 +4,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sit.qb.dtos.Menu_Qty;
 import com.sit.qb.dtos.OrderRequestDto;
 import com.sit.qb.entity.Customer;
 import com.sit.qb.entity.MenuItem;
 import com.sit.qb.entity.Order;
+import com.sit.qb.entity.OrderItem;
 import com.sit.qb.repository.MenuItemRepository;
 import com.sit.qb.repository.OrderRepository;
 
@@ -26,56 +29,51 @@ public class OrderServiceImpl {
 
 	@Autowired
 	private MenuItemRepository menuItemRepository;
-	
 
 	public Order placeOrder(OrderRequestDto orderDto) {
-		
+
 		Customer customer = customerServiceImpl.getCustomer(orderDto.getCustomerId());
-		if(customer!=null) {
-			
-			// get all menu ids
-			 List<Long> menuIds = orderDto.getItems().stream().map(menuQty -> menuQty.getMenuItemId()).collect(Collectors.toList());
-			 
-			 List<Boolean> isMenuExist=new ArrayList<>();
-			 for (Long id : menuIds) {
-				MenuItem menuItem = menuItemRepository.findById(id).get();
-				
-				if(menuItem!=null) {
-					if(menuItem.getIsAvailable()==true) {
-						isMenuExist.add(true);
-					}else {
-						isMenuExist.add(false);
-					}
-					
-				}else {
-					isMenuExist.add(false);
-				}
-			}
-			 
-			 if(isMenuExist.contains(true)) {
-				 // place your order
-				 
-				 Order order=new Order();
-				 order.setCustomer(customer);
-				 
-				 LocalDateTime dateTime = LocalDateTime.now();
-				 order.setOrderDate(dateTime);
-				 
-				 
-				 // set all order Item
-			
-				 
-					orderRepository.save(order);
-			 }
-			 
-			 
+		if (customer == null) {
+			throw new RuntimeException("Customer not found");
 		}
-		
-		
-	
 
-		return null;
+		Order order = new Order();
+		order.setCustomer(customer);
+		order.setOrderDate(LocalDateTime.now());
 
+		List<OrderItem> orderItems = new ArrayList<>();
+		double totalAmount = 0.0;
+
+		// Loop through each item from request
+		for (Menu_Qty itemDto : orderDto.getItems()) {
+
+			MenuItem menuItem = menuItemRepository.findById(itemDto.getMenuItemId())
+					.orElseThrow(() -> new RuntimeException("Menu item not found: " + itemDto.getMenuItemId()));
+
+			if (!menuItem.getIsAvailable()) {
+				throw new RuntimeException("Menu item not available: " + menuItem.getName());
+			}
+
+			OrderItem orderItem = new OrderItem();
+			orderItem.setMenuItem(menuItem);
+			orderItem.setQuantity((int)itemDto.getQuantity());
+			orderItem.setUnitPrice(menuItem.getPrice());
+
+			// IMPORTANT: set relation
+			orderItem.setOrder(order);
+
+			orderItems.add(orderItem);
+
+			// Calculate total
+			totalAmount += menuItem.getPrice() * itemDto.getQuantity();
+		}
+
+		// Set values in order
+		order.setOrderItems(orderItems);
+		order.setTotalAmount(totalAmount);
+
+		// Save (Cascade will save orderItems automatically)
+		return orderRepository.save(order);
 	}
 
 }

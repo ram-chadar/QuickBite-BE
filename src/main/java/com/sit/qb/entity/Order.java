@@ -32,7 +32,9 @@ public class Order {
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status = OrderStatus.PLACED;
+	
 	private Double totalAmount;
+	
 	@Column(updatable = false)
 	private LocalDateTime orderDate = LocalDateTime.now();
 
