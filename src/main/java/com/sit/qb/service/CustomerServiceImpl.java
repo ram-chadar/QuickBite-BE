@@ -30,6 +30,7 @@ public class CustomerServiceImpl {
 	
 	public Customer getCustomerByName(String name) {
 
+		int res=10/0;
 		Optional<Customer> customer = repository.findByName(name);
 		if (customer.isPresent()) {
 			return customer.get();

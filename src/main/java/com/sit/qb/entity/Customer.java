@@ -19,6 +19,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "customer")
@@ -31,12 +34,16 @@ public class Customer {
 	private Long id;
 
 	@Column(nullable = false)
+	@Pattern(regexp = "^[A-Za-z]{2,}(?:\\s[A-Za-z]{2,})?$", message = "Invalid Name")
 	private String name;
 
 	@Column(unique = true, nullable = false)
+	@Email(message = "Invalid Email")
 	private String email;
 
+	@Size(min =10, max = 10,message = "Invalid Phone" )
 	private String phone;
+	
 	private String address;
 
 // One customer → many orders
