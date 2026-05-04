@@ -12,29 +12,33 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "restaurant")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class Restaurant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Restaurant name is required")
+	@Size(max = 150, message = "Name must not exceed 150 characters")
 	private String name;
+
+	@Size(max = 100, message = "City must not exceed 100 characters")
 	private String city;
+
+	@Size(max = 80, message = "Cuisine type must not exceed 80 characters")
 	private String cuisineType;
+
 	private Boolean isOpen = true;
 
-// One restaurant → many menu items
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<MenuItem> menuItems = new ArrayList<>();
 
 	public Restaurant() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {

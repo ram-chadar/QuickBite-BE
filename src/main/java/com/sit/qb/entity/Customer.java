@@ -20,6 +20,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -34,16 +35,19 @@ public class Customer {
 	private Long id;
 
 	@Column(nullable = false)
-	@Pattern(regexp = "^[A-Za-z]{2,}(?:\\s[A-Za-z]{2,})?$", message = "Invalid Name")
+	@NotBlank(message = "Name is required")
+	@Size(max = 100, message = "Name must not exceed 100 characters")
 	private String name;
 
 	@Column(unique = true, nullable = false)
+	@NotBlank(message = "Email is required")
 	@Email(message = "Invalid Email")
 	private String email;
 
-	@Size(min =10, max = 10,message = "Invalid Phone" )
+	@Size(max = 15, message = "Phone must not exceed 15 characters")
 	private String phone;
-	
+
+	@Size(max = 255, message = "Address must not exceed 255 characters")
 	private String address;
 
 // One customer → many orders

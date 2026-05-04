@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sit.qb.entity.Customer;
+import com.sit.qb.exceptions.DuplicateEmailException;
+import com.sit.qb.projections.CustomerSummary;
 import com.sit.qb.repository.CustomerRepository;
 
 @Service
@@ -16,48 +18,46 @@ public class CustomerServiceImpl {
 	private CustomerRepository repository;
 
 	public Customer register(Customer customer) {
+		if (repository.existsByEmail(customer.getEmail())) {
+			throw new DuplicateEmailException("Email already registered");
+		}
 		return repository.save(customer);
 	}
 
 	public Customer getCustomer(Long id) {
-
 		Optional<Customer> customer = repository.findById(id);
 		if (customer.isPresent()) {
 			return customer.get();
 		}
 		return null;
 	}
-	
-	public Customer getCustomerByName(String name) {
 
-		int res=10/0;
+	public Customer getCustomerByName(String name) {
 		Optional<Customer> customer = repository.findByName(name);
 		if (customer.isPresent()) {
 			return customer.get();
 		}
 		return null;
 	}
-	
-	public Customer getCustomerByEmail_Phone(String email,String phone) {
 
-		Optional<Customer> customer = repository.findByEmailAndPhone(email,phone);
+	public Customer getCustomerByEmail_Phone(String email, String phone) {
+		Optional<Customer> customer = repository.findByEmailAndPhone(email, phone);
 		if (customer.isPresent()) {
 			return customer.get();
 		}
 		return null;
 	}
 
-
 	public List<Customer> getAllCustomers() {
 		return repository.findAll();
-
 	}
 
 	public void deleteCustomer(Long id) {
 		repository.deleteById(id);
-		
 	}
 
-	
+	public List<CustomerSummary> getCustomerSummary() {
+		return repository.findAllProjectedBy();
+	}
 
 }

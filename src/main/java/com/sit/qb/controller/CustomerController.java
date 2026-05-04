@@ -1,5 +1,7 @@
 package com.sit.qb.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sit.qb.entity.Customer;
+import com.sit.qb.entity.Order;
+import com.sit.qb.projections.CustomerSummary;
 import com.sit.qb.response.StanderedSuccessResponse;
 import com.sit.qb.service.CustomerServiceImpl;
+import com.sit.qb.service.OrderServiceImpl;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -24,52 +28,63 @@ public class CustomerController {
 	@Autowired
 	private CustomerServiceImpl service;
 
+	@Autowired
+	private OrderServiceImpl orderServiceImpl;
+
+	// QB-1: Register customer
 	@PostMapping
-	public Customer saveUpdate(@RequestBody @Valid Customer customer) {
-		return service.register(customer);
+	public StanderedSuccessResponse saveUpdate(@RequestBody @Valid Customer customer) {
+		Customer saved = service.register(customer);
+		return new StanderedSuccessResponse(201, "Customer Registered Successfully", saved);
+	}
+
+	// QB-13: Customer summary projection
+	@GetMapping("/summary")
+	public StanderedSuccessResponse getCustomerSummary() {
+		List<CustomerSummary> summary = service.getCustomerSummary();
+		return new StanderedSuccessResponse(200, "Customer Summary Loaded Successfully", summary);
 	}
 
 	@GetMapping("/{id}")
 	public StanderedSuccessResponse getCustomer(@PathVariable Long id) {
-		StanderedSuccessResponse response=null;
 		Customer customer = service.getCustomer(id);
-		if(customer!=null) {
-			response = new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
-		}else {
-			response = new StanderedSuccessResponse(200, "Customer Not Found", customer);
+		if (customer != null) {
+			return new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
+		} else {
+			return new StanderedSuccessResponse(200, "Customer Not Found", null);
 		}
-		
-		return response;
 	}
 
 	@GetMapping("/byname/{name}")
-	public StanderedSuccessResponse getCustomerByName(
-			@PathVariable @Pattern(regexp = "^[A-Za-z]{2,}(?:\\s+[A-Za-z]{2,})?$", message = "Invalid name") String name) {
-		
+	public StanderedSuccessResponse getCustomerByName(@PathVariable String name) {
 		Customer customer = service.getCustomerByName(name);
-		StanderedSuccessResponse response = new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
-		return response;
+		return new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
 	}
 
 	@GetMapping("/{email}/{phone}")
-	public Customer getCustomerByEmail_Phone(@PathVariable String email, @PathVariable String phone) {
-		return service.getCustomerByEmail_Phone(email, phone);
+	public StanderedSuccessResponse getCustomerByEmail_Phone(@PathVariable String email,
+			@PathVariable String phone) {
+		Customer customer = service.getCustomerByEmail_Phone(email, phone);
+		return new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
 	}
 
 	@GetMapping
 	public StanderedSuccessResponse getAllCustomers() {
-
-		StanderedSuccessResponse response = new StanderedSuccessResponse(200, "Customer Loaded Successfully",
-				service.getAllCustomers());
-		return response;
+		return new StanderedSuccessResponse(200, "Customer Loaded Successfully", service.getAllCustomers());
 	}
 
 	@DeleteMapping("/{id}")
-	public StanderedSuccessResponse deleteCustomer(@PathVariable @Min(value = 1, message = "Invalid Id") Long id) {
+	public StanderedSuccessResponse deleteCustomer(
+			@PathVariable @Min(value = 1, message = "Invalid Id") Long id) {
 		service.deleteCustomer(id);
+		return new StanderedSuccessResponse(200, "Customer Deleted Successfully", true);
+	}
 
-		StanderedSuccessResponse response = new StanderedSuccessResponse(200, "Customer Deleted Successfully", true);
-		return response;
+	// QB-10: Get all orders of a customer
+	@GetMapping("/{customerId}/orders")
+	public StanderedSuccessResponse getCustomerOrders(@PathVariable Long customerId) {
+		List<Order> orders = orderServiceImpl.getOrdersByCustomer(customerId);
+		return new StanderedSuccessResponse(200, "Orders Loaded Successfully", orders);
 	}
 
 }

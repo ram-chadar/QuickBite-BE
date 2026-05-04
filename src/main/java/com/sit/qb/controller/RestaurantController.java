@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sit.qb.entity.MenuItem;
 import com.sit.qb.entity.Restaurant;
+import com.sit.qb.response.StanderedSuccessResponse;
 import com.sit.qb.service.RestaurantServiceImpl;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -21,27 +24,31 @@ public class RestaurantController {
 	@Autowired
 	private RestaurantServiceImpl service;
 
+	// QB-2: Register restaurant
 	@PostMapping
-	public Restaurant register(@RequestBody Restaurant restaurant) {
-		return service.register(restaurant);
+	public StanderedSuccessResponse register(@RequestBody @Valid Restaurant restaurant) {
+		Restaurant saved = service.register(restaurant);
+		return new StanderedSuccessResponse(201, "Restaurant Registered Successfully", saved);
 	}
 
 	@GetMapping("/{id}")
-	public Restaurant getRestaurant(@PathVariable Long id) {
-	return	service.getRestaurant(id);
+	public StanderedSuccessResponse getRestaurant(@PathVariable Long id) {
+		Restaurant restaurant = service.getRestaurant(id);
+		return new StanderedSuccessResponse(200, "Restaurant Loaded Successfully", restaurant);
 	}
 
+	// QB-3: Add menu item
 	@PostMapping("/{id}/menu")
-	public MenuItem addMenu(@RequestBody MenuItem menuItem, @PathVariable Long id) {
-
-		return service.addMenu(menuItem, id);
-
+	public StanderedSuccessResponse addMenu(@RequestBody @Valid MenuItem menuItem, @PathVariable Long id) {
+		MenuItem saved = service.addMenu(menuItem, id);
+		return new StanderedSuccessResponse(201, "Menu Item Added Successfully", saved);
 	}
-	
+
+	// QB-4: Get all restaurants
 	@GetMapping
-	public List<Restaurant> getAllRestaurant() {
-	return	service.getAllRestaurant();
+	public StanderedSuccessResponse getAllRestaurant() {
+		List<Restaurant> restaurants = service.getAllRestaurant();
+		return new StanderedSuccessResponse(200, "Restaurants Loaded Successfully", restaurants);
 	}
-	
 
 }

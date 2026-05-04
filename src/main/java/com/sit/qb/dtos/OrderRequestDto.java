@@ -2,26 +2,31 @@ package com.sit.qb.dtos;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 public class OrderRequestDto {
-	
-	private long customerId;
+
+	@NotNull(message = "customerId is required")
+	private Long customerId;
+
+	@NotNull(message = "items list is required")
+	@NotEmpty(message = "Order must contain at least one item")
 	private List<Menu_Qty> items;
-	
+
 	public OrderRequestDto() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public OrderRequestDto(long customerId, List<Menu_Qty> items) {
-		super();
+	public OrderRequestDto(Long customerId, List<Menu_Qty> items) {
 		this.customerId = customerId;
 		this.items = items;
 	}
 
-	public long getCustomerId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(long customerId) {
+	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
 	}
 
@@ -32,8 +37,5 @@ public class OrderRequestDto {
 	public void setItems(List<Menu_Qty> items) {
 		this.items = items;
 	}
-	
-	
-	
 
 }

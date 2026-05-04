@@ -10,33 +10,37 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "menu_item")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class MenuItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Menu item name is required")
+	@Size(max = 150, message = "Name must not exceed 150 characters")
 	private String name;
+
+	@NotNull(message = "Price is required")
+	@DecimalMin(value = "0.01", message = "Price must be greater than 0")
 	private Double price;
+
+	@Size(max = 80, message = "Category must not exceed 80 characters")
 	private String category;
+
 	private Boolean isAvailable = true;
 
-// Many items → one restaurant
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id")
 	@JsonBackReference
 	private Restaurant restaurant;
 
 	public MenuItem() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {

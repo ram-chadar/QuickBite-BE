@@ -12,28 +12,31 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "delivery_agent")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class DeliveryAgent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@NotBlank(message = "Agent name is required")
+	@Size(max = 100, message = "Name must not exceed 100 characters")
 	private String name;
+
+	@NotBlank(message = "Phone is required")
+	@Size(max = 15, message = "Phone must not exceed 15 characters")
 	private String phone;
+
 	private Boolean isAvailable = true;
-	
-	
+
 	@OneToMany(mappedBy = "deliveryAgent", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Order> orders = new ArrayList<>();
-	
+
 	public DeliveryAgent() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -75,6 +78,5 @@ public class DeliveryAgent {
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
-	
-	
+
 }
