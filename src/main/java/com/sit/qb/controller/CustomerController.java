@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +16,6 @@ import com.sit.qb.response.StanderedSuccessResponse;
 import com.sit.qb.service.CustomerServiceImpl;
 import com.sit.qb.service.OrderServiceImpl;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 @RestController
@@ -30,13 +27,6 @@ public class CustomerController {
 
 	@Autowired
 	private OrderServiceImpl orderServiceImpl;
-
-	// QB-1: Register customer
-	@PostMapping
-	public StanderedSuccessResponse saveUpdate(@RequestBody @Valid Customer customer) {
-		Customer saved = service.register(customer);
-		return new StanderedSuccessResponse(201, "Customer Registered Successfully", saved);
-	}
 
 	// QB-13: Customer summary projection
 	@GetMapping("/summary")

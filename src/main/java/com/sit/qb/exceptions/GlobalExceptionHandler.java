@@ -89,4 +89,10 @@ public class GlobalExceptionHandler {
 		return new StanderedErrorResponse(409, "Email already registered", null);
 	}
 
+	@ExceptionHandler(InvalidCredentialsException.class)
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	public StanderedErrorResponse invalidCredentials(InvalidCredentialsException ex) {
+		return new StanderedErrorResponse(401, ex.getMessage(), null);
+	}
+
 }

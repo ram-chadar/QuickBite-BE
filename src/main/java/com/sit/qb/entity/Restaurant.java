@@ -11,7 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -35,6 +37,10 @@ public class Restaurant {
 	private String cuisineType;
 
 	private Boolean isOpen = true;
+
+	@OneToOne
+	@JoinColumn(name = "app_user_id")
+	private AppUser appUser;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
 	@JsonManagedReference
@@ -89,6 +95,14 @@ public class Restaurant {
 
 	public void setMenuItems(List<MenuItem> menuItems) {
 		this.menuItems = menuItems;
+	}
+
+	public AppUser getAppUser() {
+		return appUser;
+	}
+
+	public void setAppUser(AppUser appUser) {
+		this.appUser = appUser;
 	}
 
 }

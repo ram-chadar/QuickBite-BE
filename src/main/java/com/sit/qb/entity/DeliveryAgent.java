@@ -11,7 +11,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,6 +21,7 @@ import jakarta.validation.constraints.Size;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "delivery_agent")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handlerClass"})
 public class DeliveryAgent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +36,11 @@ public class DeliveryAgent {
 	private String phone;
 
 	private Boolean isAvailable = true;
+
+	@OneToOne
+	@JoinColumn(name = "app_user_id")
+	@JsonIgnore
+	private AppUser appUser;
 
 	@OneToMany(mappedBy = "deliveryAgent", fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -79,6 +87,14 @@ public class DeliveryAgent {
 
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
+	}
+
+	public AppUser getAppUser() {
+		return appUser;
+	}
+
+	public void setAppUser(AppUser appUser) {
+		this.appUser = appUser;
 	}
 
 }

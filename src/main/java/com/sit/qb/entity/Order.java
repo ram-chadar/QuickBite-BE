@@ -24,6 +24,7 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "orders")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handlerClass"})
 //@Data
 //@NoArgsConstructor
 //@AllArgsConstructor

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.sit.qb.entity.MenuItem;
 import com.sit.qb.entity.Restaurant;
 import com.sit.qb.response.StanderedSuccessResponse;
@@ -23,13 +24,6 @@ public class RestaurantController {
 
 	@Autowired
 	private RestaurantServiceImpl service;
-
-	// QB-2: Register restaurant
-	@PostMapping
-	public StanderedSuccessResponse register(@RequestBody @Valid Restaurant restaurant) {
-		Restaurant saved = service.register(restaurant);
-		return new StanderedSuccessResponse(201, "Restaurant Registered Successfully", saved);
-	}
 
 	@GetMapping("/{id}")
 	public StanderedSuccessResponse getRestaurant(@PathVariable Long id) {

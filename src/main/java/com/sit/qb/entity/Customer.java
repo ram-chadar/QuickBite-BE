@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +29,7 @@ import jakarta.validation.constraints.Size;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "customer")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handlerClass"})
 //@Data
 //@NoArgsConstructor
 //@AllArgsConstructor
@@ -51,6 +53,14 @@ public class Customer {
 
 	@Size(max = 255, message = "Address must not exceed 255 characters")
 	private String address;
+
+	@JsonIgnore
+	private String password;
+
+	@OneToOne
+	@JoinColumn(name = "app_user_id")
+	@JsonIgnore
+	private AppUser appUser;
 
 // One customer → many orders
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -136,7 +146,21 @@ public class Customer {
 	public void setFavourites(Set<Restaurant> favourites) {
 		this.favourites = favourites;
 	}
-	
-	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public AppUser getAppUser() {
+		return appUser;
+	}
+
+	public void setAppUser(AppUser appUser) {
+		this.appUser = appUser;
+	}
 
 }
