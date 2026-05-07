@@ -18,10 +18,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "handlerClass"})
 @Entity
 @Table(name = "delivery_agent")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handlerClass"})
 public class DeliveryAgent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
