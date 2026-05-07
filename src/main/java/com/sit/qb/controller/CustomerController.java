@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public StanderedSuccessResponse createProfile(@Valid @RequestBody CustomerProfileCreateDto dto) {
         ProfileResponseDto response = service.createProfile(dto);
         return new StanderedSuccessResponse(201, "Customer profile created successfully", response);
@@ -44,12 +46,14 @@ public class CustomerController {
 
     // QB-13: Customer summary projection
     @GetMapping("/summary")
+    @PreAuthorize("hasRole('ADMIN')")
     public StanderedSuccessResponse getCustomerSummary() {
         List<CustomerSummary> summary = service.getCustomerSummary();
         return new StanderedSuccessResponse(200, "Customer Summary Loaded Successfully", summary);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public StanderedSuccessResponse getCustomer(@PathVariable Long id) {
         CustomerProfile customer = service.getCustomer(id);
         if (customer != null) {
@@ -60,12 +64,14 @@ public class CustomerController {
     }
 
     @GetMapping("/byname/{name}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public StanderedSuccessResponse getCustomerByName(@PathVariable String name) {
         CustomerProfile customer = service.getCustomerByName(name);
         return new StanderedSuccessResponse(200, "Customer Loaded Successfully", customer);
     }
 
     @GetMapping("/{email}/{phone}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public StanderedSuccessResponse getCustomerByEmail_Phone(@PathVariable String email,
             @PathVariable String phone) {
         CustomerProfile customer = service.getCustomerByEmail_Phone(email, phone);
@@ -73,11 +79,13 @@ public class CustomerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public StanderedSuccessResponse getAllCustomers() {
         return new StanderedSuccessResponse(200, "Customer Loaded Successfully", service.getAllCustomers());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public StanderedSuccessResponse deleteCustomer(
             @PathVariable @Min(value = 1, message = "Invalid Id") Long id) {
         service.deleteCustomer(id);
@@ -86,6 +94,7 @@ public class CustomerController {
 
     // QB-10: Get all orders of a customer
     @GetMapping("/{customerId}/orders")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public StanderedSuccessResponse getCustomerOrders(@PathVariable Long customerId) {
         List<Order> orders = orderServiceImpl.getOrdersByCustomer(customerId);
         return new StanderedSuccessResponse(200, "Orders Loaded Successfully", orders);

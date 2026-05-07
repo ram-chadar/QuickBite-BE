@@ -2,6 +2,7 @@ package com.sit.qb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class DeliveryAgentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('DELIVERY_AGENT')")
     public StanderedSuccessResponse createProfile(@Valid @RequestBody AgentProfileCreateDto dto) {
         ProfileResponseDto response = agentService.createProfile(dto);
         return new StanderedSuccessResponse(201, "Delivery agent profile created successfully", response);

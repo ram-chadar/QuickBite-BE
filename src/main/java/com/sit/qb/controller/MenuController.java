@@ -3,6 +3,7 @@ package com.sit.qb.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ public class MenuController {
 
 	// QB-9: Search menu items by keyword
 	@GetMapping("/search")
+	@PreAuthorize("isAuthenticated()")
 	public StanderedSuccessResponse searchByKeyword(@RequestParam String keyword) {
 		if (keyword == null || keyword.isBlank()) {
 			throw new IllegalStateTransitionException("keyword must not be blank");
@@ -33,6 +35,7 @@ public class MenuController {
 
 	// QB-12: Get available items at or below maxPrice
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public StanderedSuccessResponse getMenuByMaxPrice(@RequestParam Double maxPrice) {
 		List<MenuItem> items = menuItemService.getMenuItemsBelowPrice(maxPrice);
 		return new StanderedSuccessResponse(200, "Menu items loaded successfully", items);
@@ -40,6 +43,7 @@ public class MenuController {
 
 	// QB-15: Top 3 most ordered items
 	@GetMapping("/top3")
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT')")
 	public StanderedSuccessResponse getTop3() {
 		List<TopItemDto> top3 = menuItemService.getTop3OrderedItems();
 		return new StanderedSuccessResponse(200, "Top 3 menu items loaded", top3);
