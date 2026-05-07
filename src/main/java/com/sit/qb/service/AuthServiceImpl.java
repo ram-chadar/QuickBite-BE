@@ -1,162 +1,195 @@
 package com.sit.qb.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sit.qb.dtos.AdminRegisterDto;
 import com.sit.qb.dtos.AgentRegisterDto;
 import com.sit.qb.dtos.AuthResponseDto;
 import com.sit.qb.dtos.CustomerRegisterDto;
 import com.sit.qb.dtos.LoginRequestDto;
 import com.sit.qb.dtos.RestaurantRegisterDto;
-import com.sit.qb.entity.AppUser;
-import com.sit.qb.entity.Customer;
-import com.sit.qb.entity.DeliveryAgent;
-import com.sit.qb.entity.Restaurant;
+import com.sit.qb.entity.CustomerProfile;
+import com.sit.qb.entity.DeliveryAgentProfile;
+import com.sit.qb.entity.RestaurantProfile;
+import com.sit.qb.entity.User;
 import com.sit.qb.entity.UserRole;
 import com.sit.qb.exceptions.DuplicateEmailException;
 import com.sit.qb.exceptions.InvalidCredentialsException;
-import com.sit.qb.repository.AppUserRepository;
-import com.sit.qb.repository.CustomerRepository;
-import com.sit.qb.repository.DeliveryAgentRepository;
-import com.sit.qb.repository.RestaurantRepository;
+import com.sit.qb.repository.CustomerProfileRepository;
+import com.sit.qb.repository.DeliveryAgentProfileRepository;
+import com.sit.qb.repository.RestaurantProfileRepository;
+import com.sit.qb.repository.UserRepository;
 
 @Service
 public class AuthServiceImpl {
 
-	@Autowired
-	private AppUserRepository appUserRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Autowired
-	private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerProfileRepository customerProfileRepository;
 
-	@Autowired
-	private DeliveryAgentRepository agentRepository;
+    @Autowired
+    private DeliveryAgentProfileRepository agentProfileRepository;
 
-	@Autowired
-	private RestaurantRepository restaurantRepository;
+    @Autowired
+    private RestaurantProfileRepository restaurantProfileRepository;
 
-	@Transactional
-	public AuthResponseDto registerCustomer(CustomerRegisterDto dto) {
-		if (appUserRepository.existsByEmail(dto.getEmail())) {
-			throw new DuplicateEmailException("Email already registered");
-		}
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-		AppUser appUser = new AppUser();
-		appUser.setEmail(dto.getEmail());
-		appUser.setPassword(dto.getPassword());
-		appUser.setRole(UserRole.CUSTOMER);
-		appUser = appUserRepository.save(appUser);
+    @Transactional
+    public AuthResponseDto registerCustomer(CustomerRegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException("Email already registered");
+        }
 
-		Customer customer = new Customer();
-		customer.setName(dto.getName());
-		customer.setEmail(dto.getEmail());
-		customer.setPhone(dto.getPhone());
-		customer.setAddress(dto.getAddress());
-		customer.setPassword(dto.getPassword());
-		customer.setAppUser(appUser);
-		customer = customerRepository.save(customer);
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.CUSTOMER);
+        user.setEnabled(true);
+        user = userRepository.save(user);
 
-		return new AuthResponseDto(
-				customer.getId(), appUser.getId(),
-				customer.getName(), appUser.getEmail(),
-				appUser.getRole().name(),
-				customer.getPhone(), customer.getAddress());
-	}
+        CustomerProfile profile = new CustomerProfile();
+        profile.setName(dto.getName());
+        profile.setPhone(dto.getPhone());
+        profile.setAddress(dto.getAddress());
+        profile.setUser(user);
+        profile = customerProfileRepository.save(profile);
 
-	@Transactional
-	public AuthResponseDto registerAgent(AgentRegisterDto dto) {
-		if (appUserRepository.existsByEmail(dto.getEmail())) {
-			throw new DuplicateEmailException("Email already registered");
-		}
+        return new AuthResponseDto(
+                profile.getId(), user.getId(),
+                profile.getName(), user.getEmail(),
+                user.getRole().name(),
+                profile.getPhone(), profile.getAddress());
+    }
 
-		AppUser appUser = new AppUser();
-		appUser.setEmail(dto.getEmail());
-		appUser.setPassword(dto.getPassword());
-		appUser.setRole(UserRole.DELIVERY_AGENT);
-		appUser = appUserRepository.save(appUser);
+    @Transactional
+    public AuthResponseDto registerAgent(AgentRegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException("Email already registered");
+        }
 
-		DeliveryAgent agent = new DeliveryAgent();
-		agent.setName(dto.getName());
-		agent.setPhone(dto.getPhone());
-		agent.setAppUser(appUser);
-		agent = agentRepository.save(agent);
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.DELIVERY_AGENT);
+        user.setEnabled(true);
+        user = userRepository.save(user);
 
-		return new AuthResponseDto(
-				agent.getId(), appUser.getId(),
-				agent.getName(), appUser.getEmail(),
-				appUser.getRole().name(),
-				agent.getPhone(), null);
-	}
+        DeliveryAgentProfile profile = new DeliveryAgentProfile();
+        profile.setName(dto.getName());
+        profile.setPhone(dto.getPhone());
+        profile.setUser(user);
+        profile = agentProfileRepository.save(profile);
 
-	@Transactional
-	public AuthResponseDto registerRestaurant(RestaurantRegisterDto dto) {
-		if (appUserRepository.existsByEmail(dto.getEmail())) {
-			throw new DuplicateEmailException("Email already registered");
-		}
+        return new AuthResponseDto(
+                profile.getId(), user.getId(),
+                profile.getName(), user.getEmail(),
+                user.getRole().name(),
+                profile.getPhone(), null);
+    }
 
-		AppUser appUser = new AppUser();
-		appUser.setEmail(dto.getEmail());
-		appUser.setPassword(dto.getPassword());
-		appUser.setRole(UserRole.RESTAURANT_OWNER);
-		appUser = appUserRepository.save(appUser);
+    @Transactional
+    public AuthResponseDto registerRestaurant(RestaurantRegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException("Email already registered");
+        }
 
-		Restaurant restaurant = new Restaurant();
-		restaurant.setName(dto.getRestaurantName());
-		restaurant.setCity(dto.getCity());
-		restaurant.setCuisineType(dto.getCuisineType());
-		restaurant.setAppUser(appUser);
-		restaurant = restaurantRepository.save(restaurant);
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.RESTAURANT);
+        user.setEnabled(true);
+        user = userRepository.save(user);
 
-		return new AuthResponseDto(
-				restaurant.getId(), appUser.getId(),
-				restaurant.getName(), appUser.getEmail(),
-				appUser.getRole().name(),
-				null, null);
-	}
+        RestaurantProfile profile = new RestaurantProfile();
+        profile.setName(dto.getRestaurantName());
+        profile.setCity(dto.getCity());
+        profile.setCuisineType(dto.getCuisineType());
+        profile.setUser(user);
+        profile = restaurantProfileRepository.save(profile);
 
-	public AuthResponseDto login(LoginRequestDto dto) {
-		AppUser appUser = appUserRepository.findByEmail(dto.getEmail())
-				.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+        return new AuthResponseDto(
+                profile.getId(), user.getId(),
+                profile.getName(), user.getEmail(),
+                user.getRole().name(),
+                null, null);
+    }
 
-		if (!dto.getPassword().equals(appUser.getPassword())) {
-			throw new InvalidCredentialsException("Invalid email or password");
-		}
+    @Transactional
+    public AuthResponseDto registerAdmin(AdminRegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException("Email already registered");
+        }
 
-		return buildLoginResponse(appUser);
-	}
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.ADMIN);
+        user.setEnabled(true);
+        user = userRepository.save(user);
 
-	private AuthResponseDto buildLoginResponse(AppUser appUser) {
-		switch (appUser.getRole()) {
-			case CUSTOMER: {
-				Customer customer = customerRepository.findByAppUser_Id(appUser.getId())
-						.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
-				return new AuthResponseDto(
-						customer.getId(), appUser.getId(),
-						customer.getName(), appUser.getEmail(),
-						appUser.getRole().name(),
-						customer.getPhone(), customer.getAddress());
-			}
-			case DELIVERY_AGENT: {
-				DeliveryAgent agent = agentRepository.findByAppUser_Id(appUser.getId())
-						.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
-				return new AuthResponseDto(
-						agent.getId(), appUser.getId(),
-						agent.getName(), appUser.getEmail(),
-						appUser.getRole().name(),
-						agent.getPhone(), null);
-			}
-			case RESTAURANT_OWNER: {
-				Restaurant restaurant = restaurantRepository.findByAppUser_Id(appUser.getId())
-						.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
-				return new AuthResponseDto(
-						restaurant.getId(), appUser.getId(),
-						restaurant.getName(), appUser.getEmail(),
-						appUser.getRole().name(),
-						null, null);
-			}
-			default:
-				throw new InvalidCredentialsException("Invalid email or password");
-		}
-	}
+        return new AuthResponseDto(
+                null, user.getId(),
+                null, user.getEmail(),
+                user.getRole().name(),
+                null, null);
+    }
+
+    public AuthResponseDto login(LoginRequestDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        return buildLoginResponse(user);
+    }
+
+    private AuthResponseDto buildLoginResponse(User user) {
+        switch (user.getRole()) {
+            case CUSTOMER: {
+                CustomerProfile profile = customerProfileRepository.findByUser_Id(user.getId())
+                        .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+                return new AuthResponseDto(
+                        profile.getId(), user.getId(),
+                        profile.getName(), user.getEmail(),
+                        user.getRole().name(),
+                        profile.getPhone(), profile.getAddress());
+            }
+            case DELIVERY_AGENT: {
+                DeliveryAgentProfile profile = agentProfileRepository.findByUser_Id(user.getId())
+                        .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+                return new AuthResponseDto(
+                        profile.getId(), user.getId(),
+                        profile.getName(), user.getEmail(),
+                        user.getRole().name(),
+                        profile.getPhone(), null);
+            }
+            case RESTAURANT: {
+                RestaurantProfile profile = restaurantProfileRepository.findByUser_Id(user.getId())
+                        .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+                return new AuthResponseDto(
+                        profile.getId(), user.getId(),
+                        profile.getName(), user.getEmail(),
+                        user.getRole().name(),
+                        null, null);
+            }
+            case ADMIN: {
+                return new AuthResponseDto(
+                        null, user.getId(),
+                        null, user.getEmail(),
+                        user.getRole().name(),
+                        null, null);
+            }
+            default:
+                throw new InvalidCredentialsException("Invalid email or password");
+        }
+    }
 }

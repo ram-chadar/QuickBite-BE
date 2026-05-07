@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -92,6 +93,12 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(InvalidCredentialsException.class)
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public StanderedErrorResponse invalidCredentials(InvalidCredentialsException ex) {
+		return new StanderedErrorResponse(401, ex.getMessage(), null);
+	}
+
+	@ExceptionHandler(UsernameNotFoundException.class)
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	public StanderedErrorResponse usernameNotFound(UsernameNotFoundException ex) {
 		return new StanderedErrorResponse(401, ex.getMessage(), null);
 	}
 

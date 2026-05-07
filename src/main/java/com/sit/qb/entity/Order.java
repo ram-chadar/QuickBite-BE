@@ -24,95 +24,51 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "handlerClass"})
 @Entity
 @Table(name = "orders")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class Order {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private OrderStatus status = OrderStatus.PLACED;
-	
-	private Double totalAmount;
-	
-	@Column(updatable = false)
-	private LocalDateTime orderDate = LocalDateTime.now();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-// Many orders → one customer
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status = OrderStatus.PLACED;
 
-//Many orders → one agent
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "delivery_agent_id")
-	private DeliveryAgent deliveryAgent;
+    private Double totalAmount;
 
-//One order → many items
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<OrderItem> orderItems = new ArrayList<>();
-	
-	public Order() {
-		// TODO Auto-generated constructor stub
-	}
+    @Column(updatable = false)
+    private LocalDateTime orderDate = LocalDateTime.now();
 
-	public Long getId() {
-		return id;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private CustomerProfile customer;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_agent_id")
+    private DeliveryAgentProfile deliveryAgent;
 
-	public OrderStatus getStatus() {
-		return status;
-	}
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
+    public Order() {}
 
-	public Double getTotalAmount() {
-		return totalAmount;
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-	public void setTotalAmount(Double totalAmount) {
-		this.totalAmount = totalAmount;
-	}
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 
-	public LocalDateTime getOrderDate() {
-		return orderDate;
-	}
+    public Double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
 
-	public void setOrderDate(LocalDateTime orderDate) {
-		this.orderDate = orderDate;
-	}
+    public LocalDateTime getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 
-	public Customer getCustomer() {
-		return customer;
-	}
+    public CustomerProfile getCustomer() { return customer; }
+    public void setCustomer(CustomerProfile customer) { this.customer = customer; }
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+    public DeliveryAgentProfile getDeliveryAgent() { return deliveryAgent; }
+    public void setDeliveryAgent(DeliveryAgentProfile deliveryAgent) { this.deliveryAgent = deliveryAgent; }
 
-	public DeliveryAgent getDeliveryAgent() {
-		return deliveryAgent;
-	}
-
-	public void setDeliveryAgent(DeliveryAgent deliveryAgent) {
-		this.deliveryAgent = deliveryAgent;
-	}
-
-	public List<OrderItem> getOrderItems() {
-		return orderItems;
-	}
-
-	public void setOrderItems(List<OrderItem> orderItems) {
-		this.orderItems = orderItems;
-	}
-	
-	
+    public List<OrderItem> getOrderItems() { return orderItems; }
+    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 }

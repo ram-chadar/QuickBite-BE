@@ -6,58 +6,40 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sit.qb.entity.Customer;
-import com.sit.qb.exceptions.DuplicateEmailException;
+import com.sit.qb.entity.CustomerProfile;
 import com.sit.qb.projections.CustomerSummary;
-import com.sit.qb.repository.CustomerRepository;
+import com.sit.qb.repository.CustomerProfileRepository;
 
 @Service
 public class CustomerServiceImpl {
 
-	@Autowired
-	private CustomerRepository repository;
+    @Autowired
+    private CustomerProfileRepository repository;
 
-	public Customer register(Customer customer) {
-		if (repository.existsByEmail(customer.getEmail())) {
-			throw new DuplicateEmailException("Email already registered");
-		}
-		return repository.save(customer);
-	}
+    public CustomerProfile getCustomer(Long id) {
+        Optional<CustomerProfile> customer = repository.findById(id);
+        return customer.orElse(null);
+    }
 
-	public Customer getCustomer(Long id) {
-		Optional<Customer> customer = repository.findById(id);
-		if (customer.isPresent()) {
-			return customer.get();
-		}
-		return null;
-	}
+    public CustomerProfile getCustomerByName(String name) {
+        int res = 10 / 0; // intentional — tests ArithmeticException handler (do not remove)
+        Optional<CustomerProfile> customer = repository.findByName(name);
+        return customer.orElse(null);
+    }
 
-	public Customer getCustomerByName(String name) {
-		Optional<Customer> customer = repository.findByName(name);
-		if (customer.isPresent()) {
-			return customer.get();
-		}
-		return null;
-	}
+    public CustomerProfile getCustomerByEmail_Phone(String email, String phone) {
+        return repository.findByUser_EmailAndPhone(email, phone).orElse(null);
+    }
 
-	public Customer getCustomerByEmail_Phone(String email, String phone) {
-		Optional<Customer> customer = repository.findByEmailAndPhone(email, phone);
-		if (customer.isPresent()) {
-			return customer.get();
-		}
-		return null;
-	}
+    public List<CustomerProfile> getAllCustomers() {
+        return repository.findAll();
+    }
 
-	public List<Customer> getAllCustomers() {
-		return repository.findAll();
-	}
+    public void deleteCustomer(Long id) {
+        repository.deleteById(id);
+    }
 
-	public void deleteCustomer(Long id) {
-		repository.deleteById(id);
-	}
-
-	public List<CustomerSummary> getCustomerSummary() {
-		return repository.findAllProjectedBy();
-	}
-
+    public List<CustomerSummary> getCustomerSummary() {
+        return repository.findAllProjectedBy();
+    }
 }

@@ -7,41 +7,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sit.qb.entity.MenuItem;
-import com.sit.qb.entity.Restaurant;
+import com.sit.qb.entity.RestaurantProfile;
 import com.sit.qb.exceptions.ResourceNotFoundException;
 import com.sit.qb.repository.MenuItemRepository;
-import com.sit.qb.repository.RestaurantRepository;
+import com.sit.qb.repository.RestaurantProfileRepository;
 
 @Service
 public class RestaurantServiceImpl {
 
-	@Autowired
-	private RestaurantRepository restaurantRepository;
+    @Autowired
+    private RestaurantProfileRepository restaurantProfileRepository;
 
-	@Autowired
-	private MenuItemRepository menItemRepository;
+    @Autowired
+    private MenuItemRepository menuItemRepository;
 
-	public Restaurant register(Restaurant restaurant) {
-		return restaurantRepository.save(restaurant);
-	}
+    public RestaurantProfile getRestaurant(Long id) {
+        Optional<RestaurantProfile> restaurant = restaurantProfileRepository.findById(id);
+        return restaurant.orElse(null);
+    }
 
-	public Restaurant getRestaurant(Long id) {
-		Optional<Restaurant> restaurant = restaurantRepository.findById(id);
-		if (restaurant.isPresent()) {
-			return restaurant.get();
-		}
-		return null;
-	}
+    public MenuItem addMenu(MenuItem menuItem, Long id) {
+        RestaurantProfile restaurant = restaurantProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found: " + id));
+        menuItem.setRestaurant(restaurant);
+        return menuItemRepository.save(menuItem);
+    }
 
-	public MenuItem addMenu(MenuItem menuItem, Long id) {
-		Restaurant restaurant = restaurantRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Restaurant not found: " + id));
-		menuItem.setRestaurant(restaurant);
-		return menItemRepository.save(menuItem);
-	}
-
-	public List<Restaurant> getAllRestaurant() {
-		return restaurantRepository.findAll();
-	}
-
+    public List<RestaurantProfile> getAllRestaurant() {
+        return restaurantProfileRepository.findAll();
+    }
 }

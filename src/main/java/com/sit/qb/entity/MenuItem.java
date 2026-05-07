@@ -20,77 +20,46 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "menu_item")
 public class MenuItem {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@NotBlank(message = "Menu item name is required")
-	@Size(max = 150, message = "Name must not exceed 150 characters")
-	private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@NotNull(message = "Price is required")
-	@DecimalMin(value = "0.01", message = "Price must be greater than 0")
-	private Double price;
+    @NotBlank(message = "Menu item name is required")
+    @Size(max = 150, message = "Name must not exceed 150 characters")
+    private String name;
 
-	@Size(max = 80, message = "Category must not exceed 80 characters")
-	private String category;
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.01", message = "Price must be greater than 0")
+    private Double price;
 
-	private Boolean isAvailable = true;
+    @Size(max = 80, message = "Category must not exceed 80 characters")
+    private String category;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "restaurant_id")
-	@JsonBackReference
-	private Restaurant restaurant;
+    private Boolean isAvailable = true;
 
-	public MenuItem() {
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id")
+    @JsonBackReference
+    private RestaurantProfile restaurant;
 
-	public Long getId() {
-		return id;
-	}
+    public MenuItem() {}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-	public Double getPrice() {
-		return price;
-	}
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-	public void setPrice(Double price) {
-		this.price = price;
-	}
+    public Boolean getIsAvailable() { return isAvailable; }
+    public void setIsAvailable(Boolean isAvailable) { this.isAvailable = isAvailable; }
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public Boolean getIsAvailable() {
-		return isAvailable;
-	}
-
-	public void setIsAvailable(Boolean isAvailable) {
-		this.isAvailable = isAvailable;
-	}
-
-	public Restaurant getRestaurant() {
-		return restaurant;
-	}
-
-	public void setRestaurant(Restaurant restaurant) {
-		this.restaurant = restaurant;
-	}
-
+    public RestaurantProfile getRestaurant() { return restaurant; }
+    public void setRestaurant(RestaurantProfile restaurant) { this.restaurant = restaurant; }
 }
