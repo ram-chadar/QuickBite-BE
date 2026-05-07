@@ -13,6 +13,7 @@ import com.sit.qb.dtos.AgentRegisterDto;
 import com.sit.qb.dtos.AuthResponseDto;
 import com.sit.qb.dtos.CustomerRegisterDto;
 import com.sit.qb.dtos.LoginRequestDto;
+import com.sit.qb.dtos.RegistrationResponseDto;
 import com.sit.qb.dtos.RestaurantRegisterDto;
 import com.sit.qb.response.StanderedSuccessResponse;
 import com.sit.qb.service.AuthServiceImpl;
@@ -29,28 +30,28 @@ public class AuthController {
     @PostMapping("/register/customer")
     @ResponseStatus(HttpStatus.CREATED)
     public StanderedSuccessResponse registerCustomer(@Valid @RequestBody CustomerRegisterDto dto) {
-        AuthResponseDto response = authService.registerCustomer(dto);
-        return new StanderedSuccessResponse(201, "Customer registered successfully", response);
+        RegistrationResponseDto response = authService.registerCustomer(dto);
+        return new StanderedSuccessResponse(201, "Customer user created successfully", response);
     }
 
     @PostMapping("/register/delivery-agent")
     @ResponseStatus(HttpStatus.CREATED)
     public StanderedSuccessResponse registerAgent(@Valid @RequestBody AgentRegisterDto dto) {
-        AuthResponseDto response = authService.registerAgent(dto);
-        return new StanderedSuccessResponse(201, "Delivery agent registered successfully", response);
+        RegistrationResponseDto response = authService.registerAgent(dto);
+        return new StanderedSuccessResponse(201, "Delivery agent user created successfully", response);
     }
 
     @PostMapping("/register/restaurant")
     @ResponseStatus(HttpStatus.CREATED)
     public StanderedSuccessResponse registerRestaurant(@Valid @RequestBody RestaurantRegisterDto dto) {
-        AuthResponseDto response = authService.registerRestaurant(dto);
-        return new StanderedSuccessResponse(201, "Restaurant registered successfully", response);
+        RegistrationResponseDto response = authService.registerRestaurant(dto);
+        return new StanderedSuccessResponse(201, "Restaurant user created successfully", response);
     }
 
     @PostMapping("/register/admin")
     @ResponseStatus(HttpStatus.CREATED)
     public StanderedSuccessResponse registerAdmin(@Valid @RequestBody AdminRegisterDto dto) {
-        AuthResponseDto response = authService.registerAdmin(dto);
+        RegistrationResponseDto response = authService.registerAdmin(dto);
         return new StanderedSuccessResponse(201, "Admin registered successfully", response);
     }
 

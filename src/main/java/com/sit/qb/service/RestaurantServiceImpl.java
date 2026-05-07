@@ -6,11 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sit.qb.dtos.ProfileResponseDto;
+import com.sit.qb.dtos.RestaurantProfileCreateDto;
 import com.sit.qb.entity.MenuItem;
 import com.sit.qb.entity.RestaurantProfile;
+import com.sit.qb.entity.User;
+import com.sit.qb.entity.UserRole;
+import com.sit.qb.exceptions.ConflictException;
 import com.sit.qb.exceptions.ResourceNotFoundException;
 import com.sit.qb.repository.MenuItemRepository;
 import com.sit.qb.repository.RestaurantProfileRepository;
+import com.sit.qb.repository.UserRepository;
 
 @Service
 public class RestaurantServiceImpl {
@@ -20,6 +26,34 @@ public class RestaurantServiceImpl {
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public ProfileResponseDto createProfile(RestaurantProfileCreateDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + dto.getUserId()));
+
+        if (user.getRole() != UserRole.RESTAURANT) {
+            throw new ConflictException("User is not registered as a restaurant");
+        }
+
+        if (restaurantProfileRepository.findByUser_Id(user.getId()).isPresent()) {
+            throw new ConflictException("Profile already exists for this user");
+        }
+
+        RestaurantProfile profile = new RestaurantProfile();
+        profile.setName(dto.getRestaurantName());
+        profile.setCity(dto.getCity());
+        profile.setCuisineType(dto.getCuisineType());
+        profile.setUser(user);
+        profile = restaurantProfileRepository.save(profile);
+
+        return new ProfileResponseDto(
+                profile.getId(), user.getId(),
+                profile.getName(), null,
+                null, user.getRole().name());
+    }
 
     public RestaurantProfile getRestaurant(Long id) {
         Optional<RestaurantProfile> restaurant = restaurantProfileRepository.findById(id);

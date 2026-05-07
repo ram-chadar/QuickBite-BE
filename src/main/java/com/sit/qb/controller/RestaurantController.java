@@ -3,13 +3,17 @@ package com.sit.qb.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sit.qb.dtos.ProfileResponseDto;
+import com.sit.qb.dtos.RestaurantProfileCreateDto;
 import com.sit.qb.entity.MenuItem;
 import com.sit.qb.entity.RestaurantProfile;
 import com.sit.qb.response.StanderedSuccessResponse;
@@ -23,6 +27,13 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantServiceImpl service;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public StanderedSuccessResponse createProfile(@Valid @RequestBody RestaurantProfileCreateDto dto) {
+        ProfileResponseDto response = service.createProfile(dto);
+        return new StanderedSuccessResponse(201, "Restaurant profile created successfully", response);
+    }
 
     @GetMapping("/{id}")
     public StanderedSuccessResponse getRestaurant(@PathVariable Long id) {
