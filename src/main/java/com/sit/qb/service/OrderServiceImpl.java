@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.criteria.JoinType;
+
 import com.sit.qb.dtos.AssignAgentResponseDto;
 import com.sit.qb.dtos.Menu_Qty;
 import com.sit.qb.dtos.OrderDetailDto;
@@ -138,7 +140,18 @@ public class OrderServiceImpl {
         } catch (IllegalArgumentException e) {
             throw new IllegalStateTransitionException("Invalid order status: " + statusStr);
         }
-        Specification<Order> spec = (root, query, cb) -> cb.equal(root.get("status"), status);
+        Specification<Order> spec = (root, query, cb) -> {
+            // Skip fetch joins for the COUNT query that findAll() issues internally;
+            // applying them there causes "owner of fetched association was not present".
+            if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+                // Fetch joins to prevent N+1 when Jackson serializes the order list.
+                root.fetch("customer", JoinType.LEFT);
+                root.fetch("deliveryAgent", JoinType.LEFT);
+                root.fetch("orderItems", JoinType.LEFT).fetch("menuItem", JoinType.LEFT);
+                query.distinct(true);
+            }
+            return cb.equal(root.get("status"), status);
+        };
         return orderRepository.findAll(spec);
     }
 

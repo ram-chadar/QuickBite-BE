@@ -53,12 +53,15 @@ public class CustomerProfile {
     @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
+    // Excluded from JSON to avoid N+1 on /api/customers list endpoint;
+    // favourites would otherwise trigger one extra query per customer.
     @ManyToMany
     @JoinTable(
         name = "customer_fav",
         joinColumns = @JoinColumn(name = "customer_id"),
         inverseJoinColumns = @JoinColumn(name = "restaurant_id")
     )
+    @JsonIgnore
     private Set<RestaurantProfile> favourites = new HashSet<>();
 
     public CustomerProfile() {}

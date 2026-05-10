@@ -3,8 +3,8 @@ package com.sit.qb.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -49,8 +49,10 @@ public class RestaurantProfile {
     @JoinColumn(name = "user_id")
     private User user;
 
+    // Excluded from JSON to avoid N+1 on /api/restaurants list endpoint;
+    // menu items are fetched separately via /api/menu/* endpoints.
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonIgnore
     private List<MenuItem> menuItems = new ArrayList<>();
 
     public RestaurantProfile() {}

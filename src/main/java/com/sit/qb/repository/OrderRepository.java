@@ -15,7 +15,16 @@ import com.sit.qb.entity.Order;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
-	List<Order> findByCustomerIdOrderByOrderDateDesc(Long customerId);
+	// JOIN FETCH customer + deliveryAgent + orderItems + menuItem to prevent N+1
+	// during JSON serialization of the returned list.
+	@Query("SELECT DISTINCT o FROM Order o "
+			+ "LEFT JOIN FETCH o.customer "
+			+ "LEFT JOIN FETCH o.deliveryAgent "
+			+ "LEFT JOIN FETCH o.orderItems oi "
+			+ "LEFT JOIN FETCH oi.menuItem "
+			+ "WHERE o.customer.id = :customerId "
+			+ "ORDER BY o.orderDate DESC")
+	List<Order> findByCustomerIdOrderByOrderDateDesc(@Param("customerId") Long customerId);
 
 	@Query("SELECT o FROM Order o JOIN FETCH o.orderItems oi JOIN FETCH oi.menuItem WHERE o.id = :orderId")
 	Optional<Order> findByIdWithItems(@Param("orderId") Long orderId);
@@ -27,7 +36,18 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 			+ "FROM Order o JOIN o.customer c JOIN o.deliveryAgent a")
 	List<DeliveryReportDto> getDeliveryReport();
 
-	@Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.menuItem.restaurant.id = :restaurantId ORDER BY o.orderDate DESC")
+	// Subquery in WHERE so JOIN FETCH on orderItems returns ALL items per order
+	// (not just items belonging to this restaurant). Prevents N+1 on serialization.
+	@Query("SELECT DISTINCT o FROM Order o "
+			+ "LEFT JOIN FETCH o.customer "
+			+ "LEFT JOIN FETCH o.deliveryAgent "
+			+ "LEFT JOIN FETCH o.orderItems oi "
+			+ "LEFT JOIN FETCH oi.menuItem "
+			+ "WHERE o.id IN ("
+			+ "  SELECT o2.id FROM Order o2 JOIN o2.orderItems oi2 "
+			+ "  WHERE oi2.menuItem.restaurant.id = :restaurantId"
+			+ ") "
+			+ "ORDER BY o.orderDate DESC")
 	List<Order> findByRestaurantId(@Param("restaurantId") Long restaurantId);
 
 }
