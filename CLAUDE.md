@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Workflow
+
+Never create pull requests. asked for branch & Commit directly to that branch and push.
+
 ## Commands
 
 ```bash

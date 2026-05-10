@@ -1,0 +1,622 @@
+{
+  "info": {
+    "_postman_id": "qb-complete-001",
+    "name": "QuickBite Complete (Seed + API + Negative)",
+    "description": "Single unified collection with seed data, happy-path API tests, and negative tests.\n\n=== HOW TO USE ===\n1. Create a Postman Environment and select it before running.\n2. Run [SEED] folders 1-6 IN ORDER (once on a clean DB) to populate users, profiles, menu items, and orders. Each register/profile request auto-saves IDs to env vars.\n3. After seeding, the API and Negative Tests folders can be run individually.\n\n=== SEED CREDENTIALS ===\n- Customers (C1-C10): {firstname.lastname}@quickbite.in / Pass@123\n- Restaurants (R1-R5): spicegarden | southspice | dragonwok | burgerbox | biryanihouse @quickbite.in / Rest@123\n- Delivery Agent: ravi.agent@quickbite.in / Agent@123\n- Admin: admin@quickbite.com / Admin@123\n\n=== ASSUMPTIONS (clean DB) ===\n- Customer userId 1-10, profileId 1-10\n- Restaurant userId 11-15, profileId 1-5\n- Delivery Agent userId 16, profileId 1\n- Admin userId 17\n- Menu item IDs 1-50 (M01-M10=R1, M11-M20=R2, M21-M30=R3, M31-M40=R4, M41-M50=R5)\n\nBase URL: http://localhost:8080",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "[SEED] 1. Customers",
+      "description": "10 Indian customers — register + profile pairs. Saves c{n}_userId and c{n}_profileId env vars.",
+      "item": [
+        {
+          "name": "C1 Register - Arjun Sharma",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c1_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"arjun.sharma@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C1 Profile - Arjun Sharma",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c1_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c1_userId}},\n  \"name\": \"Arjun Sharma\",\n  \"phone\": \"9876543201\",\n  \"address\": \"12 MG Road, Bengaluru, Karnataka 560001\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C2 Register - Priya Patel",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c2_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"priya.patel@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C2 Profile - Priya Patel",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c2_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "priya.patel@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c2_userId}},\n  \"name\": \"Priya Patel\",\n  \"phone\": \"9876543202\",\n  \"address\": \"45 Juhu Beach Road, Mumbai, Maharashtra 400049\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C3 Register - Rahul Mehta",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c3_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"rahul.mehta@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C3 Profile - Rahul Mehta",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c3_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "rahul.mehta@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c3_userId}},\n  \"name\": \"Rahul Mehta\",\n  \"phone\": \"9876543203\",\n  \"address\": \"78 Connaught Place, New Delhi 110001\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C4 Register - Sneha Reddy",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c4_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"sneha.reddy@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C4 Profile - Sneha Reddy",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c4_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "sneha.reddy@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c4_userId}},\n  \"name\": \"Sneha Reddy\",\n  \"phone\": \"9876543204\",\n  \"address\": \"23 Banjara Hills, Hyderabad, Telangana 500034\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C5 Register - Vikram Singh",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c5_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"vikram.singh@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C5 Profile - Vikram Singh",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c5_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "vikram.singh@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c5_userId}},\n  \"name\": \"Vikram Singh\",\n  \"phone\": \"9876543205\",\n  \"address\": \"56 Park Street, Kolkata, West Bengal 700016\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C6 Register - Anjali Nair",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c6_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"anjali.nair@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C6 Profile - Anjali Nair",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c6_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "anjali.nair@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c6_userId}},\n  \"name\": \"Anjali Nair\",\n  \"phone\": \"9876543206\",\n  \"address\": \"89 Marine Drive, Kochi, Kerala 682031\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C7 Register - Rohan Gupta",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c7_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"rohan.gupta@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C7 Profile - Rohan Gupta",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c7_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "rohan.gupta@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c7_userId}},\n  \"name\": \"Rohan Gupta\",\n  \"phone\": \"9876543207\",\n  \"address\": \"34 Civil Lines, Jaipur, Rajasthan 302006\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C8 Register - Kavya Rao",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c8_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"kavya.rao@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C8 Profile - Kavya Rao",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c8_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "kavya.rao@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c8_userId}},\n  \"name\": \"Kavya Rao\",\n  \"phone\": \"9876543208\",\n  \"address\": \"67 Koramangala 4th Block, Bengaluru, Karnataka 560034\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C9 Register - Amit Kumar",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c9_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"amit.kumar@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C9 Profile - Amit Kumar",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c9_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "amit.kumar@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c9_userId}},\n  \"name\": \"Amit Kumar\",\n  \"phone\": \"9876543209\",\n  \"address\": \"90 Salt Lake City Sector V, Kolkata, West Bengal 700091\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        },
+        {
+          "name": "C10 Register - Pooja Joshi",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c10_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"pooja.joshi@quickbite.in\",\n  \"password\": \"Pass@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}
+          }
+        },
+        {
+          "name": "C10 Profile - Pooja Joshi",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('c10_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "pooja.joshi@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{c10_userId}},\n  \"name\": \"Pooja Joshi\",\n  \"phone\": \"9876543210\",\n  \"address\": \"15 Baner Road, Pune, Maharashtra 411045\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "[SEED] 2. Restaurants",
+      "description": "5 restaurants (different cuisines) — register + profile pairs. Saves r{n}_userId and r{n}_profileId env vars.",
+      "item": [
+        {
+          "name": "R1 Register - Spice Garden",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r1_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"spicegarden@quickbite.in\",\n  \"password\": \"Rest@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/restaurant", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "restaurant"]}
+          }
+        },
+        {
+          "name": "R1 Profile - Spice Garden (North Indian)",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r1_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{r1_userId}},\n  \"restaurantName\": \"Spice Garden\",\n  \"city\": \"New Delhi\",\n  \"cuisineType\": \"North Indian\",\n  \"phone\": \"9811001001\",\n  \"address\": \"14 Connaught Place, New Delhi 110001\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}
+          }
+        },
+        {
+          "name": "R2 Register - South Spice",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r2_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"southspice@quickbite.in\",\n  \"password\": \"Rest@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/restaurant", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "restaurant"]}
+          }
+        },
+        {
+          "name": "R2 Profile - South Spice (South Indian)",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r2_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{r2_userId}},\n  \"restaurantName\": \"South Spice\",\n  \"city\": \"Chennai\",\n  \"cuisineType\": \"South Indian\",\n  \"phone\": \"9822002002\",\n  \"address\": \"5 Anna Salai, Chennai, Tamil Nadu 600002\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}
+          }
+        },
+        {
+          "name": "R3 Register - Dragon Wok",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r3_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"dragonwok@quickbite.in\",\n  \"password\": \"Rest@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/restaurant", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "restaurant"]}
+          }
+        },
+        {
+          "name": "R3 Profile - Dragon Wok (Chinese)",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r3_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{r3_userId}},\n  \"restaurantName\": \"Dragon Wok\",\n  \"city\": \"Mumbai\",\n  \"cuisineType\": \"Chinese\",\n  \"phone\": \"9833003003\",\n  \"address\": \"22 Linking Road, Bandra, Mumbai 400050\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}
+          }
+        },
+        {
+          "name": "R4 Register - Burger Box",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r4_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"burgerbox@quickbite.in\",\n  \"password\": \"Rest@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/restaurant", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "restaurant"]}
+          }
+        },
+        {
+          "name": "R4 Profile - Burger Box (Fast Food)",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r4_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{r4_userId}},\n  \"restaurantName\": \"Burger Box\",\n  \"city\": \"Bengaluru\",\n  \"cuisineType\": \"Fast Food\",\n  \"phone\": \"9844004004\",\n  \"address\": \"88 Indiranagar 100ft Road, Bengaluru 560038\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}
+          }
+        },
+        {
+          "name": "R5 Register - Biryani House",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r5_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"biryanihouse@quickbite.in\",\n  \"password\": \"Rest@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/restaurant", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "restaurant"]}
+          }
+        },
+        {
+          "name": "R5 Profile - Biryani House (Biryani)",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('r5_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{r5_userId}},\n  \"restaurantName\": \"Biryani House\",\n  \"city\": \"Hyderabad\",\n  \"cuisineType\": \"Biryani\",\n  \"phone\": \"9855005005\",\n  \"address\": \"3 Necklace Road, Hyderabad, Telangana 500063\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "[SEED] 3. Delivery Agent & Admin",
+      "description": "Register Ravi Kumar (delivery agent) and admin. Saves agent_userId, agent_profileId env vars.",
+      "item": [
+        {
+          "name": "DA Register - Ravi Kumar",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('agent_userId', j.data.userId);"], "type": "text/javascript"}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"ravi.agent@quickbite.in\",\n  \"password\": \"Agent@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/delivery-agent", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "delivery-agent"]}
+          }
+        },
+        {
+          "name": "DA Profile - Ravi Kumar",
+          "event": [{"listen": "test", "script": {"exec": ["var j = pm.response.json(); pm.environment.set('agent_profileId', j.data.profileId);"], "type": "text/javascript"}}],
+          "request": {
+            "auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"userId\": {{agent_userId}},\n  \"name\": \"Ravi Kumar\",\n  \"phone\": \"9100001111\"\n}"},
+            "url": {"raw": "http://localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}
+          }
+        },
+        {
+          "name": "Admin Register",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"email\": \"admin@quickbite.com\",\n  \"password\": \"Admin@123\"\n}"},
+            "url": {"raw": "http://localhost:8080/auth/register/admin", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "admin"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "[SEED] 4. Menu Items",
+      "description": "10 menu items per restaurant — 50 total. Uses r{n}_profileId env var.",
+      "item": [
+        {
+          "name": "R1 - Spice Garden (North Indian)",
+          "item": [
+            {"name": "M01 Butter Chicken", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Butter Chicken\",\n  \"price\": 280.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M02 Dal Makhani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Dal Makhani\",\n  \"price\": 180.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M03 Paneer Tikka", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Paneer Tikka\",\n  \"price\": 220.0,\n  \"category\": \"Starter\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M04 Garlic Naan", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Garlic Naan\",\n  \"price\": 50.0,\n  \"category\": \"Bread\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M05 Chicken Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chicken Biryani\",\n  \"price\": 250.0,\n  \"category\": \"Rice\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M06 Palak Paneer", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Palak Paneer\",\n  \"price\": 190.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M07 Samosa (2 pcs)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Samosa (2 pcs)\",\n  \"price\": 60.0,\n  \"category\": \"Snack\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M08 Mango Lassi", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Mango Lassi\",\n  \"price\": 80.0,\n  \"category\": \"Beverage\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M09 Gulab Jamun", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Gulab Jamun\",\n  \"price\": 70.0,\n  \"category\": \"Dessert\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}},
+            {"name": "M10 Tandoori Chicken", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Tandoori Chicken\",\n  \"price\": 320.0,\n  \"category\": \"Starter\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r1_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r1_profileId}}", "menu"]}}}
+          ]
+        },
+        {
+          "name": "R2 - South Spice (South Indian)",
+          "item": [
+            {"name": "M11 Masala Dosa", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Masala Dosa\",\n  \"price\": 120.0,\n  \"category\": \"Breakfast\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M12 Idli Sambar (4 pcs)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Idli Sambar (4 pcs)\",\n  \"price\": 90.0,\n  \"category\": \"Breakfast\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M13 Medu Vada (2 pcs)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Medu Vada (2 pcs)\",\n  \"price\": 80.0,\n  \"category\": \"Snack\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M14 Chettinad Chicken Curry", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chettinad Chicken Curry\",\n  \"price\": 260.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M15 Coconut Chutney", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Coconut Chutney\",\n  \"price\": 30.0,\n  \"category\": \"Side\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M16 Filter Coffee", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Filter Coffee\",\n  \"price\": 50.0,\n  \"category\": \"Beverage\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M17 Onion Uttapam", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Onion Uttapam\",\n  \"price\": 110.0,\n  \"category\": \"Breakfast\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M18 Rasam Rice", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Rasam Rice\",\n  \"price\": 100.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M19 Payasam", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Payasam\",\n  \"price\": 90.0,\n  \"category\": \"Dessert\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}},
+            {"name": "M20 Appam with Stew", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "southspice@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Appam with Stew\",\n  \"price\": 150.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r2_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r2_profileId}}", "menu"]}}}
+          ]
+        },
+        {
+          "name": "R3 - Dragon Wok (Chinese)",
+          "item": [
+            {"name": "M21 Veg Fried Rice", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Veg Fried Rice\",\n  \"price\": 160.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M22 Chicken Manchurian", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chicken Manchurian\",\n  \"price\": 220.0,\n  \"category\": \"Starter\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M23 Hakka Noodles", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Hakka Noodles\",\n  \"price\": 170.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M24 Chilli Paneer", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chilli Paneer\",\n  \"price\": 200.0,\n  \"category\": \"Starter\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M25 Steamed Momos (6 pcs)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Steamed Momos (6 pcs)\",\n  \"price\": 120.0,\n  \"category\": \"Snack\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M26 Hot and Sour Soup", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Hot and Sour Soup\",\n  \"price\": 130.0,\n  \"category\": \"Soup\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M27 Spring Rolls (4 pcs)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Spring Rolls (4 pcs)\",\n  \"price\": 150.0,\n  \"category\": \"Starter\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M28 Sweet and Sour Chicken", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Sweet and Sour Chicken\",\n  \"price\": 240.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M29 Schezwan Fried Rice", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Schezwan Fried Rice\",\n  \"price\": 180.0,\n  \"category\": \"Main Course\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}},
+            {"name": "M30 Wonton Soup", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "dragonwok@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Wonton Soup\",\n  \"price\": 140.0,\n  \"category\": \"Soup\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r3_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r3_profileId}}", "menu"]}}}
+          ]
+        },
+        {
+          "name": "R4 - Burger Box (Fast Food)",
+          "item": [
+            {"name": "M31 Classic Veggie Burger", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Classic Veggie Burger\",\n  \"price\": 149.0,\n  \"category\": \"Burger\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M32 Chicken Zinger Burger", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chicken Zinger Burger\",\n  \"price\": 199.0,\n  \"category\": \"Burger\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M33 Loaded Fries", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Loaded Fries\",\n  \"price\": 99.0,\n  \"category\": \"Sides\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M34 Margherita Pizza (7 inch)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Margherita Pizza (7 inch)\",\n  \"price\": 249.0,\n  \"category\": \"Pizza\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M35 BBQ Chicken Pizza (7 inch)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"BBQ Chicken Pizza (7 inch)\",\n  \"price\": 299.0,\n  \"category\": \"Pizza\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M36 Onion Rings", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Onion Rings\",\n  \"price\": 89.0,\n  \"category\": \"Sides\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M37 Chocolate Milkshake", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Chocolate Milkshake\",\n  \"price\": 129.0,\n  \"category\": \"Beverage\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M38 Cold Coffee", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Cold Coffee\",\n  \"price\": 109.0,\n  \"category\": \"Beverage\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M39 Pasta Arrabbiata", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pasta Arrabbiata\",\n  \"price\": 179.0,\n  \"category\": \"Pasta\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}},
+            {"name": "M40 Grilled Chicken Wrap", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "burgerbox@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Grilled Chicken Wrap\",\n  \"price\": 169.0,\n  \"category\": \"Wrap\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r4_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r4_profileId}}", "menu"]}}}
+          ]
+        },
+        {
+          "name": "R5 - Biryani House (Biryani)",
+          "item": [
+            {"name": "M41 Hyderabadi Chicken Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Hyderabadi Chicken Biryani\",\n  \"price\": 299.0,\n  \"category\": \"Biryani\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M42 Mutton Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Mutton Biryani\",\n  \"price\": 399.0,\n  \"category\": \"Biryani\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M43 Veg Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Veg Biryani\",\n  \"price\": 199.0,\n  \"category\": \"Biryani\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M44 Egg Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Egg Biryani\",\n  \"price\": 249.0,\n  \"category\": \"Biryani\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M45 Prawn Biryani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Prawn Biryani\",\n  \"price\": 349.0,\n  \"category\": \"Biryani\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M46 Raita", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Raita\",\n  \"price\": 50.0,\n  \"category\": \"Side\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M47 Mirchi ka Salan", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Mirchi ka Salan\",\n  \"price\": 80.0,\n  \"category\": \"Side\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M48 Double Ka Meetha", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Double Ka Meetha\",\n  \"price\": 99.0,\n  \"category\": \"Dessert\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M49 Sheer Khurma", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Sheer Khurma\",\n  \"price\": 89.0,\n  \"category\": \"Dessert\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}},
+            {"name": "M50 Nimbu Pani", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "biryanihouse@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Nimbu Pani\",\n  \"price\": 40.0,\n  \"category\": \"Beverage\",\n  \"isAvailable\": true\n}"}, "url": {"raw": "http://localhost:8080/api/restaurants/{{r5_profileId}}/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "{{r5_profileId}}", "menu"]}}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[SEED] 5. Orders",
+      "description": "15 sample orders. Assumes clean DB: customer profileIds 1-10, menu item IDs 1-50.",
+      "item": [
+        {"name": "O01 - Arjun: Butter Chicken + Paneer Tikka (R1)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c1_profileId}},\n  \"items\": [\n    {\"menuItemId\": 1, \"quantity\": 2},\n    {\"menuItemId\": 3, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O02 - Priya: Masala Dosa + Idli Sambar (R2)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "priya.patel@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c2_profileId}},\n  \"items\": [\n    {\"menuItemId\": 11, \"quantity\": 1},\n    {\"menuItemId\": 12, \"quantity\": 2}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O03 - Rahul: Veg Fried Rice + Chicken Manchurian (R3)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "rahul.mehta@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c3_profileId}},\n  \"items\": [\n    {\"menuItemId\": 21, \"quantity\": 1},\n    {\"menuItemId\": 22, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O04 - Sneha: Classic Veggie Burger + Loaded Fries (R4)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "sneha.reddy@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c4_profileId}},\n  \"items\": [\n    {\"menuItemId\": 31, \"quantity\": 2},\n    {\"menuItemId\": 33, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O05 - Vikram: Hyd Chicken Biryani + Raita (R5)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "vikram.singh@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c5_profileId}},\n  \"items\": [\n    {\"menuItemId\": 41, \"quantity\": 1},\n    {\"menuItemId\": 46, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O06 - Anjali: Medu Vada + Filter Coffee (R2)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "anjali.nair@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c6_profileId}},\n  \"items\": [\n    {\"menuItemId\": 13, \"quantity\": 2},\n    {\"menuItemId\": 16, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O07 - Rohan: Hakka Noodles + Steamed Momos (R3)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "rohan.gupta@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c7_profileId}},\n  \"items\": [\n    {\"menuItemId\": 23, \"quantity\": 1},\n    {\"menuItemId\": 25, \"quantity\": 2}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O08 - Kavya: Dal Makhani + Garlic Naan (R1)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "kavya.rao@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c8_profileId}},\n  \"items\": [\n    {\"menuItemId\": 2, \"quantity\": 2},\n    {\"menuItemId\": 4, \"quantity\": 3}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O09 - Amit: Chicken Zinger Burger + Margherita Pizza (R4)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "amit.kumar@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c9_profileId}},\n  \"items\": [\n    {\"menuItemId\": 32, \"quantity\": 1},\n    {\"menuItemId\": 34, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O10 - Pooja: Mutton Biryani + Mirchi ka Salan (R5)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "pooja.joshi@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c10_profileId}},\n  \"items\": [\n    {\"menuItemId\": 42, \"quantity\": 1},\n    {\"menuItemId\": 47, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O11 - Arjun: Chettinad Chicken Curry + Appam with Stew (R2)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c1_profileId}},\n  \"items\": [\n    {\"menuItemId\": 14, \"quantity\": 1},\n    {\"menuItemId\": 20, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O12 - Priya: Chilli Paneer + Hot and Sour Soup (R3)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "priya.patel@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c2_profileId}},\n  \"items\": [\n    {\"menuItemId\": 24, \"quantity\": 1},\n    {\"menuItemId\": 26, \"quantity\": 2}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O13 - Rahul: BBQ Chicken Pizza + Chocolate Milkshake (R4)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "rahul.mehta@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c3_profileId}},\n  \"items\": [\n    {\"menuItemId\": 35, \"quantity\": 1},\n    {\"menuItemId\": 37, \"quantity\": 2}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O14 - Sneha: Egg Biryani + Double Ka Meetha (R5)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "sneha.reddy@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c4_profileId}},\n  \"items\": [\n    {\"menuItemId\": 44, \"quantity\": 2},\n    {\"menuItemId\": 48, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+        {"name": "O15 - Vikram: Chicken Biryani + Samosa + Mango Lassi (R1)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "vikram.singh@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"customerId\": {{c5_profileId}},\n  \"items\": [\n    {\"menuItemId\": 5, \"quantity\": 1},\n    {\"menuItemId\": 7, \"quantity\": 2},\n    {\"menuItemId\": 8, \"quantity\": 1}\n  ]\n}"}, "url": {"raw": "http://localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}}
+      ]
+    },
+    {
+      "name": "Auth - Login",
+      "description": "Login examples for each role. Registration is in [SEED] folders.",
+      "item": [
+        {"name": "Login - Customer", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"arjun.sharma@quickbite.in\",\n    \"password\": \"Pass@123\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}},
+        {"name": "Login - Restaurant", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"spicegarden@quickbite.in\",\n    \"password\": \"Rest@123\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}},
+        {"name": "Login - Delivery Agent", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"ravi.agent@quickbite.in\",\n    \"password\": \"Agent@123\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}},
+        {"name": "Login - Admin", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"admin@quickbite.com\",\n    \"password\": \"Admin@123\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}}
+      ]
+    },
+    {
+      "name": "Security Tests (401 & 403)",
+      "description": "Verify unauthenticated = 401, wrong role = 403.",
+      "item": [
+        {"name": "No Auth Header → 401", "request": {"auth": {"type": "noauth"}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/1", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "1"]}}},
+        {"name": "Wrong Credentials → 401", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "wrongpassword", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/1", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "1"]}}},
+        {"name": "CUSTOMER accessing Admin endpoint → 403", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+        {"name": "RESTAURANT accessing Customer endpoint → 403", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"name\": \"Arjun Sharma\",\n    \"phone\": \"9876543201\",\n    \"address\": \"Bengaluru\"\n}"}, "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+        {"name": "CUSTOMER accessing Delivery Report → 403", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/delivery/report", "host": ["localhost"], "port": "8080", "path": ["api", "delivery", "report"]}}}
+      ]
+    },
+    {
+      "name": "Customer",
+      "description": "GET by id/name/email-phone: CUSTOMER. GET summary/all/delete: ADMIN.",
+      "item": [
+        {"name": "Get By ID (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/1", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "1"]}}},
+        {"name": "Get All (ADMIN only)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+        {"name": "By Name (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/byname/Arjun Sharma", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "byname", "Arjun Sharma"]}}},
+        {"name": "By Email and Phone (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/arjun.sharma@quickbite.in/9876543201", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "arjun.sharma@quickbite.in", "9876543201"]}}},
+        {"name": "QB-13 Get Summary - Projection (ADMIN only)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/summary", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "summary"]}}},
+        {"name": "QB-10 Get Customer Orders (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/1/orders", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "1", "orders"]}}},
+        {"name": "Delete (ADMIN only)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "DELETE", "header": [], "url": {"raw": "localhost:8080/api/customers/10", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "10"]}}}
+      ]
+    },
+    {
+      "name": "Restaurant",
+      "description": "Browse: any auth. Get Restaurant Orders: RESTAURANT or ADMIN.",
+      "item": [
+        {"name": "Get By ID (any auth)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/restaurants/1", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "1"]}}},
+        {"name": "QB-4 Get All Restaurants (any auth)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}}},
+        {"name": "Get Restaurant Orders (RESTAURANT)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/restaurants/1/orders", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "1", "orders"]}}},
+        {"name": "Get Restaurant Orders (ADMIN)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/restaurants/2/orders", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "2", "orders"]}}}
+      ]
+    },
+    {
+      "name": "Orders",
+      "description": "Place: CUSTOMER. Assign/update status: DELIVERY_AGENT or ADMIN. View: all roles. Filter by status: ADMIN.",
+      "item": [
+        {"name": "QB-7 Assign Agent (DELIVERY_AGENT)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PUT", "header": [], "url": {"raw": "localhost:8080/api/orders/1/assign-agent/1", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "assign-agent", "1"]}}},
+        {"name": "QB-8 Get Order Detail (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders/1", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1"]}}},
+        {"name": "QB-11 Filter by Status - PLACED (ADMIN)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders?status=PLACED", "host": ["localhost"], "port": "8080", "path": ["api", "orders"], "query": [{"key": "status", "value": "PLACED"}]}}},
+        {"name": "QB-14 Get Order Total (CUSTOMER)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders/1/total", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "total"]}}},
+        {"name": "QB-16 Update Status - PLACED → PREPARING", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"PREPARING\"\n}"}, "url": {"raw": "localhost:8080/api/orders/1/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "status"]}}},
+        {"name": "QB-16 Update Status - PREPARING → OUT_FOR_DELIVERY", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"OUT_FOR_DELIVERY\"\n}"}, "url": {"raw": "localhost:8080/api/orders/1/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "status"]}}},
+        {"name": "QB-16 Update Status - OUT_FOR_DELIVERY → DELIVERED", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"DELIVERED\"\n}"}, "url": {"raw": "localhost:8080/api/orders/1/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "status"]}}},
+        {"name": "QB-16 Update Status - PLACED → CANCELLED (on order 2)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"CANCELLED\"\n}"}, "url": {"raw": "localhost:8080/api/orders/2/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "2", "status"]}}}
+      ]
+    },
+    {
+      "name": "Menu",
+      "description": "Search and browse: any authenticated user. Top 3: ADMIN.",
+      "item": [
+        {"name": "QB-9 Search by Keyword (any auth)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu/search?keyword=paneer", "host": ["localhost"], "port": "8080", "path": ["api", "menu", "search"], "query": [{"key": "keyword", "value": "paneer"}]}}},
+        {"name": "QB-9 Search by Keyword - Case Insensitive", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu/search?keyword=BIRYANI", "host": ["localhost"], "port": "8080", "path": ["api", "menu", "search"], "query": [{"key": "keyword", "value": "BIRYANI"}]}}},
+        {"name": "QB-12 Items Below Max Price (any auth)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu?maxPrice=100", "host": ["localhost"], "port": "8080", "path": ["api", "menu"], "query": [{"key": "maxPrice", "value": "100"}]}}},
+        {"name": "QB-15 Top 3 Ordered Items (ADMIN)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu/top3", "host": ["localhost"], "port": "8080", "path": ["api", "menu", "top3"]}}}
+      ]
+    },
+    {
+      "name": "Delivery",
+      "description": "ADMIN only.",
+      "item": [
+        {"name": "QB-17 Delivery Report (ADMIN)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/delivery/report", "host": ["localhost"], "port": "8080", "path": ["api", "delivery", "report"]}}}
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "description": "All error-case tests grouped by domain. Expected HTTP status shown in request name.",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {"name": "Register - Duplicate Email (409)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"arjun.sharma@quickbite.in\",\n    \"password\": \"Pass@123\"\n}"}, "url": {"raw": "localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}}},
+            {"name": "Register - Missing Email (400)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"password\": \"Pass@123\"\n}"}, "url": {"raw": "localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}}},
+            {"name": "Register - Short Password (400)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"test@quickbite.in\",\n    \"password\": \"123\"\n}"}, "url": {"raw": "localhost:8080/auth/register/customer", "host": ["localhost"], "port": "8080", "path": ["auth", "register", "customer"]}}},
+            {"name": "Login - Wrong Password (401)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"arjun.sharma@quickbite.in\",\n    \"password\": \"wrongpassword\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}},
+            {"name": "Login - Email Not Found (401)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"nobody@quickbite.in\",\n    \"password\": \"Pass@123\"\n}"}, "url": {"raw": "localhost:8080/auth/login", "host": ["localhost"], "port": "8080", "path": ["auth", "login"]}}}
+          ]
+        },
+        {
+          "name": "Customer Profile",
+          "item": [
+            {"name": "QB-1 Create Profile - User Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 9999,\n    \"name\": \"Arjun Sharma\",\n    \"phone\": \"9876543201\",\n    \"address\": \"Bengaluru\"\n}"}, "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+            {"name": "QB-1 Create Profile - Wrong Role (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 11,\n    \"name\": \"Spice Garden\",\n    \"phone\": \"9811001001\",\n    \"address\": \"Delhi\"\n}"}, "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+            {"name": "QB-1 Create Profile - Duplicate (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"name\": \"Arjun Sharma\",\n    \"phone\": \"9876543201\",\n    \"address\": \"Bengaluru\"\n}"}, "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+            {"name": "QB-1 Create Profile - Missing Name (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"phone\": \"9876543201\"\n}"}, "url": {"raw": "localhost:8080/api/customers", "host": ["localhost"], "port": "8080", "path": ["api", "customers"]}}},
+            {"name": "QB-10 Get Customer Orders - Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/customers/9999/orders", "host": ["localhost"], "port": "8080", "path": ["api", "customers", "9999", "orders"]}}}
+          ]
+        },
+        {
+          "name": "Restaurant Profile & Menu",
+          "item": [
+            {"name": "QB-2 Create Profile - User Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 9999,\n    \"restaurantName\": \"Spice Garden\",\n    \"city\": \"Delhi\",\n    \"cuisineType\": \"North Indian\",\n    \"phone\": \"9811001001\",\n    \"address\": \"Delhi\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}}},
+            {"name": "QB-2 Create Profile - Wrong Role (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"restaurantName\": \"Spice Garden\",\n    \"city\": \"Delhi\",\n    \"cuisineType\": \"North Indian\",\n    \"phone\": \"9811001001\",\n    \"address\": \"Delhi\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}}},
+            {"name": "QB-2 Create Profile - Duplicate (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 11,\n    \"restaurantName\": \"Spice Garden\",\n    \"city\": \"Delhi\",\n    \"cuisineType\": \"North Indian\",\n    \"phone\": \"9811001001\",\n    \"address\": \"Delhi\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}}},
+            {"name": "QB-2 Create Profile - Missing Name (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 11,\n    \"city\": \"Delhi\",\n    \"cuisineType\": \"North Indian\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants"]}}},
+            {"name": "QB-3 Add Menu - CUSTOMER role → 403", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Butter Chicken\",\n    \"price\": 280.00,\n    \"category\": \"Main Course\",\n    \"isAvailable\": true\n}"}, "url": {"raw": "localhost:8080/api/restaurants/1/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "1", "menu"]}}},
+            {"name": "QB-3 Add Menu - Restaurant Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Paneer Tikka\",\n    \"price\": 220.00,\n    \"category\": \"Starter\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants/9999/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "9999", "menu"]}}},
+            {"name": "QB-3 Add Menu - Negative Price (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Paneer Tikka\",\n    \"price\": -50,\n    \"category\": \"Starter\"\n}"}, "url": {"raw": "localhost:8080/api/restaurants/1/menu", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "1", "menu"]}}},
+            {"name": "Get Restaurant Orders - Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "spicegarden@quickbite.in", "type": "string"}, {"key": "password", "value": "Rest@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/restaurants/9999/orders", "host": ["localhost"], "port": "8080", "path": ["api", "restaurants", "9999", "orders"]}}}
+          ]
+        },
+        {
+          "name": "Delivery Agent Profile",
+          "item": [
+            {"name": "QB-5 Create Agent Profile - User Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 9999,\n    \"name\": \"Ravi Kumar\",\n    \"phone\": \"9100001111\"\n}"}, "url": {"raw": "localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}}},
+            {"name": "QB-5 Create Agent Profile - Wrong Role (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"name\": \"Ravi Kumar\",\n    \"phone\": \"9100001111\"\n}"}, "url": {"raw": "localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}}},
+            {"name": "QB-5 Create Agent Profile - Duplicate (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 16,\n    \"name\": \"Ravi Kumar\",\n    \"phone\": \"9100001111\"\n}"}, "url": {"raw": "localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}}},
+            {"name": "QB-5 Create Agent Profile - Missing Name (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 16,\n    \"phone\": \"9100001111\"\n}"}, "url": {"raw": "localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}}},
+            {"name": "QB-5 Create Agent Profile - Missing Phone (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"userId\": 16,\n    \"name\": \"Ravi Kumar\"\n}"}, "url": {"raw": "localhost:8080/api/agents", "host": ["localhost"], "port": "8080", "path": ["api", "agents"]}}}
+          ]
+        },
+        {
+          "name": "Orders",
+          "item": [
+            {"name": "QB-6 Place Order - Invalid Customer (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"customerId\": 9999,\n    \"items\": [\n        { \"menuItemId\": 1, \"quantity\": 2 }\n    ]\n}"}, "url": {"raw": "localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+            {"name": "QB-6 Place Order - Empty Items (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"customerId\": 1,\n    \"items\": []\n}"}, "url": {"raw": "localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+            {"name": "QB-7 Assign Agent - Agent Busy (409)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PUT", "header": [], "url": {"raw": "localhost:8080/api/orders/2/assign-agent/1", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "2", "assign-agent", "1"]}}},
+            {"name": "QB-7 Assign Agent - Order Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PUT", "header": [], "url": {"raw": "localhost:8080/api/orders/9999/assign-agent/1", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "9999", "assign-agent", "1"]}}},
+            {"name": "QB-8 Get Order Detail - Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders/9999", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "9999"]}}},
+            {"name": "QB-11 Filter by Status - Invalid (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders?status=COOKING", "host": ["localhost"], "port": "8080", "path": ["api", "orders"], "query": [{"key": "status", "value": "COOKING"}]}}},
+            {"name": "QB-11 Filter by Status - Missing Param (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "admin@quickbite.com", "type": "string"}, {"key": "password", "value": "Admin@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders", "host": ["localhost"], "port": "8080", "path": ["api", "orders"]}}},
+            {"name": "QB-14 Get Order Total - Not Found (404)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/orders/9999/total", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "9999", "total"]}}},
+            {"name": "QB-16 Update Status - Terminal State (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"PREPARING\"\n}"}, "url": {"raw": "localhost:8080/api/orders/1/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "status"]}}},
+            {"name": "QB-16 Update Status - Invalid Status (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "ravi.agent@quickbite.in", "type": "string"}, {"key": "password", "value": "Agent@123", "type": "string"}]}, "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"COOKING\"\n}"}, "url": {"raw": "localhost:8080/api/orders/1/status", "host": ["localhost"], "port": "8080", "path": ["api", "orders", "1", "status"]}}}
+          ]
+        },
+        {
+          "name": "Menu",
+          "item": [
+            {"name": "QB-9 Search - No Match", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu/search?keyword=xyz999", "host": ["localhost"], "port": "8080", "path": ["api", "menu", "search"], "query": [{"key": "keyword", "value": "xyz999"}]}}},
+            {"name": "QB-12 Max Price - Negative (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu?maxPrice=-50", "host": ["localhost"], "port": "8080", "path": ["api", "menu"], "query": [{"key": "maxPrice", "value": "-50"}]}}},
+            {"name": "QB-12 Max Price - Zero (400)", "request": {"auth": {"type": "basic", "basic": [{"key": "username", "value": "arjun.sharma@quickbite.in", "type": "string"}, {"key": "password", "value": "Pass@123", "type": "string"}]}, "method": "GET", "header": [], "url": {"raw": "localhost:8080/api/menu?maxPrice=0", "host": ["localhost"], "port": "8080", "path": ["api", "menu"], "query": [{"key": "maxPrice", "value": "0"}]}}}
+          ]
+        }
+      ]
+    }
+  ]
+}

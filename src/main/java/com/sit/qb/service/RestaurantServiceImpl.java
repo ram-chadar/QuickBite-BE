@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import com.sit.qb.dtos.ProfileResponseDto;
 import com.sit.qb.dtos.RestaurantProfileCreateDto;
 import com.sit.qb.entity.MenuItem;
+import com.sit.qb.entity.Order;
 import com.sit.qb.entity.RestaurantProfile;
 import com.sit.qb.entity.User;
 import com.sit.qb.entity.UserRole;
 import com.sit.qb.exceptions.ConflictException;
 import com.sit.qb.exceptions.ResourceNotFoundException;
 import com.sit.qb.repository.MenuItemRepository;
+import com.sit.qb.repository.OrderRepository;
 import com.sit.qb.repository.RestaurantProfileRepository;
 import com.sit.qb.repository.UserRepository;
 
@@ -26,6 +28,9 @@ public class RestaurantServiceImpl {
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -46,13 +51,15 @@ public class RestaurantServiceImpl {
         profile.setName(dto.getRestaurantName());
         profile.setCity(dto.getCity());
         profile.setCuisineType(dto.getCuisineType());
+        profile.setPhone(dto.getPhone());
+        profile.setAddress(dto.getAddress());
         profile.setUser(user);
         profile = restaurantProfileRepository.save(profile);
 
         return new ProfileResponseDto(
                 profile.getId(), user.getId(),
-                profile.getName(), null,
-                null, user.getRole().name());
+                profile.getName(), profile.getPhone(),
+                profile.getAddress(), user.getRole().name());
     }
 
     public RestaurantProfile getRestaurant(Long id) {
@@ -69,5 +76,11 @@ public class RestaurantServiceImpl {
 
     public List<RestaurantProfile> getAllRestaurant() {
         return restaurantProfileRepository.findAll();
+    }
+
+    public List<Order> getOrdersByRestaurant(Long restaurantId) {
+        restaurantProfileRepository.findById(restaurantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found: " + restaurantId));
+        return orderRepository.findByRestaurantId(restaurantId);
     }
 }

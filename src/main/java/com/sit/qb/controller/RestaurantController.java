@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sit.qb.dtos.ProfileResponseDto;
 import com.sit.qb.dtos.RestaurantProfileCreateDto;
 import com.sit.qb.entity.MenuItem;
+import com.sit.qb.entity.Order;
 import com.sit.qb.entity.RestaurantProfile;
 import com.sit.qb.response.StanderedSuccessResponse;
 import com.sit.qb.service.RestaurantServiceImpl;
@@ -58,5 +59,13 @@ public class RestaurantController {
     public StanderedSuccessResponse getAllRestaurant() {
         List<RestaurantProfile> restaurants = service.getAllRestaurant();
         return new StanderedSuccessResponse(200, "Restaurants Loaded Successfully", restaurants);
+    }
+
+    // Get all orders for a specific restaurant
+    @GetMapping("/{id}/orders")
+    @PreAuthorize("hasAnyRole('RESTAURANT', 'ADMIN')")
+    public StanderedSuccessResponse getRestaurantOrders(@PathVariable Long id) {
+        List<Order> orders = service.getOrdersByRestaurant(id);
+        return new StanderedSuccessResponse(200, "Restaurant orders loaded successfully", orders);
     }
 }

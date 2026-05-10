@@ -8,8 +8,8 @@ public class QuickBiteApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(QuickBiteApplication.class, args);
-		System.out.println("App Started");
 		
+		System.out.println("App Started");
 	}
 
 }

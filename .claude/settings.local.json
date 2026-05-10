@@ -4,7 +4,8 @@
       "Bash(mvn --version)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(./mvnw compile *)"
+      "Bash(./mvnw compile *)",
+      "Bash(git push *)"
     ]
   }
 }

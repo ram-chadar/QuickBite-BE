@@ -27,4 +27,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 			+ "FROM Order o JOIN o.customer c JOIN o.deliveryAgent a")
 	List<DeliveryReportDto> getDeliveryReport();
 
+	@Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.menuItem.restaurant.id = :restaurantId ORDER BY o.orderDate DESC")
+	List<Order> findByRestaurantId(@Param("restaurantId") Long restaurantId);
+
 }

@@ -37,6 +37,12 @@ public class RestaurantProfile {
     @Size(max = 80, message = "Cuisine type must not exceed 80 characters")
     private String cuisineType;
 
+    @Size(max = 15, message = "Phone must not exceed 15 characters")
+    private String phone;
+
+    @Size(max = 255, message = "Address must not exceed 255 characters")
+    private String address;
+
     private Boolean isOpen = true;
 
     @OneToOne
@@ -60,6 +66,12 @@ public class RestaurantProfile {
 
     public String getCuisineType() { return cuisineType; }
     public void setCuisineType(String cuisineType) { this.cuisineType = cuisineType; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
     public Boolean getIsOpen() { return isOpen; }
     public void setIsOpen(Boolean isOpen) { this.isOpen = isOpen; }
