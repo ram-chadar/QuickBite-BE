@@ -92,6 +92,22 @@ List<TopItemDto> findTop3OrderedItems(Pageable pageable);
 
 Also present (not in TDD): `GET /api/customers/{id}`, `GET /api/customers`, `DELETE /api/customers/{id}`, `GET /api/customers/byname/{name}`, `GET /api/customers/{email}/{phone}`, `GET /api/restaurants/{id}`.
 
+### Security & Auth
+
+HTTP Basic Auth (no JWT). `User` entity implements `UserDetails` and is stored in the `app_user` table (not `user`, which is a reserved word in MySQL).
+
+**Roles** (`UserRole` enum): `CUSTOMER`, `RESTAURANT`, `DELIVERY_AGENT`, `ADMIN`
+
+**Two-step registration flow:**
+1. `POST /auth/register/<role>` — creates a `User` record with BCrypt-hashed password; returns `userId` + `email` + `role`.
+2. `POST /api/customers` / `POST /api/agents` / `POST /api/restaurants` — creates the profile (name, phone, etc.) linked to that `User`; requires the matching role.
+
+`/auth/**` is `permitAll`; everything else requires authentication. RBAC is enforced via `@PreAuthorize` on every controller method (`@EnableMethodSecurity` is on `SecurityConfig`). `AccessDeniedException` → 403, `InvalidCredentialsException` / `UsernameNotFoundException` → 401.
+
+**Domain rename:** old `Customer` / `DeliveryAgent` / `Restaurant` entities are now `CustomerProfile` / `DeliveryAgentProfile` / `RestaurantProfile`, each with a `@OneToOne` FK to `User`.
+
+Exception handling additions (on top of what was there before): `InvalidCredentialsException` (401), `UsernameNotFoundException` (401), `AccessDeniedException` (403).
+
 ### Known intentional behaviour
 
 - `CustomerServiceImpl.getCustomerByName()` contains `int res = 10/0` — deliberate test for the `ArithmeticException` handler. Do not remove it.
