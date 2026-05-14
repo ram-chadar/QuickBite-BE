@@ -23,6 +23,7 @@ import com.sit.qb.repository.CustomerProfileRepository;
 import com.sit.qb.repository.DeliveryAgentProfileRepository;
 import com.sit.qb.repository.RestaurantProfileRepository;
 import com.sit.qb.repository.UserRepository;
+import com.sit.qb.security.JwtUtil;
 
 @Service
 public class AuthServiceImpl {
@@ -41,6 +42,9 @@ public class AuthServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Transactional
     public RegistrationResponseDto registerCustomer(CustomerRegisterDto dto) {
@@ -106,15 +110,17 @@ public class AuthServiceImpl {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        return buildLoginResponse(user);
+        String token = jwtUtil.generateToken(user);
+        return buildLoginResponse(user, token);
     }
 
-    private AuthResponseDto buildLoginResponse(User user) {
+    private AuthResponseDto buildLoginResponse(User user, String token) {
         switch (user.getRole()) {
             case CUSTOMER: {
                 CustomerProfile profile = customerProfileRepository.findByUser_Id(user.getId())
                         .orElseThrow(() -> new InvalidCredentialsException("Customer profile not found"));
                 return new AuthResponseDto(
+                        token,
                         profile.getId(), user.getId(),
                         profile.getName(), user.getEmail(),
                         user.getRole().name(),
@@ -124,6 +130,7 @@ public class AuthServiceImpl {
                 DeliveryAgentProfile profile = agentProfileRepository.findByUser_Id(user.getId())
                         .orElseThrow(() -> new InvalidCredentialsException("Agent profile not found"));
                 return new AuthResponseDto(
+                        token,
                         profile.getId(), user.getId(),
                         profile.getName(), user.getEmail(),
                         user.getRole().name(),
@@ -133,6 +140,7 @@ public class AuthServiceImpl {
                 RestaurantProfile profile = restaurantProfileRepository.findByUser_Id(user.getId())
                         .orElseThrow(() -> new InvalidCredentialsException("Restaurant profile not found"));
                 return new AuthResponseDto(
+                        token,
                         profile.getId(), user.getId(),
                         profile.getName(), user.getEmail(),
                         user.getRole().name(),
@@ -140,6 +148,7 @@ public class AuthServiceImpl {
             }
             case ADMIN: {
                 return new AuthResponseDto(
+                        token,
                         null, user.getId(),
                         null, user.getEmail(),
                         user.getRole().name(),

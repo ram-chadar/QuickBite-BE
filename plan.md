@@ -1,223 +1,81 @@
-# Spring Security + RBAC Restructure Plan (v2 — corrected)
+# Plan: JWT Authentication Implementation
 
-## Overview
+## Goal
+Replace HTTP Basic auth with stateless JWT bearer-token auth. After successful `/auth/login`, the response must contain a JWT (HS256, **1-hour expiry**) that the client sends on every subsequent request as `Authorization: Bearer <token>`.
 
-Restructure QuickBite-BE to add Spring Security 6 with RBAC, clean architecture, BCrypt password encoding, and proper separation of auth data from profile data.
+## Current state (verified)
+- `/auth/login` returns `AuthResponseDto` (profileId, userId, name, email, role, phone, address) — **no token**.
+- `SecurityConfig` uses `httpBasic(Customizer.withDefaults())` + STATELESS sessions.
+- `UserDetailsServiceImpl` already loads `User` (which implements `UserDetails`) by email.
+- RBAC enforced via `@PreAuthorize` on every endpoint — keeps working unchanged because the JWT filter will populate `SecurityContextHolder` with `ROLE_<role>` authorities, which is what `@PreAuthorize` reads.
 
-**Two-step user creation flow (corrected):**
-```
-Step 1 — POST /auth/register/*   →  creates User row only  (email + password + role)
-Step 2 — POST /api/customers     →  creates CustomerProfile linked via userId
-          POST /api/restaurants  →  creates RestaurantProfile linked via userId
-          POST /api/agents       →  creates DeliveryAgentProfile linked via userId
-```
-Admin has no profile — Step 1 is sufficient.
+## Files to add
 
----
-
-## ✅ Already Done (previous commits)
-
-- Added `spring-boot-starter-security` to `pom.xml`
-- Created `User.java` (implements `UserDetails`, table `app_user`, BCrypt-ready)
-- Created `CustomerProfile.java`, `RestaurantProfile.java`, `DeliveryAgentProfile.java`
-- Updated `Order.java`, `MenuItem.java` to use new entity types
-- Created `UserRepository`, `CustomerProfileRepository`, `RestaurantProfileRepository`, `DeliveryAgentProfileRepository`
-- Created `security/SecurityConfig.java` (BCrypt bean, STATELESS, CSRF off)
-- Created `security/UserDetailsServiceImpl.java`
-- Updated `UserRole` enum: `CUSTOMER`, `RESTAURANT`, `DELIVERY_AGENT`, `ADMIN`
-- Added `UsernameNotFoundException` handler to `GlobalExceptionHandler`
-- Deleted old stub files
-
----
-
-## ❌ Problem with Current Implementation
-
-`POST /auth/register/customer` currently does **both** in one shot:
-```
-creates User  +  creates CustomerProfile
-```
-This violates the clean separation requirement. Auth and profile are coupled.
-
----
-
-## 🔧 Changes Required
-
-### 1. Auth Registration → User Only
-
-**File:** `AuthServiceImpl.java` — update `registerCustomer`, `registerRestaurant`, `registerAgent`
-
-Each method should **only** create a `User` row and return `{userId, email, role}`.
-Profile fields (name, phone, address, restaurantName, city, cuisineType) are **removed** from registration.
-
-**Updated registration DTOs** (email + password only):
-
-| DTO | Fields |
-|-----|--------|
-| `CustomerRegisterDto` | email, password |
-| `RestaurantRegisterDto` | email, password |
-| `AgentRegisterDto` | email, password |
-| `AdminRegisterDto` | email, password ← already correct |
-
-> `name`, `phone`, `address`, `restaurantName`, `city`, `cuisineType` fields are removed from these DTOs — they belong in profile creation.
-
----
-
-### 2. New Profile Creation DTOs
-
-| New DTO | Fields | Used by |
-|---------|--------|---------|
-| `CustomerProfileCreateDto` | userId, name, phone, address | `POST /api/customers` |
-| `RestaurantProfileCreateDto` | userId, restaurantName, city, cuisineType | `POST /api/restaurants` |
-| `AgentProfileCreateDto` | userId, name, phone | `POST /api/agents` |
-
-All `userId` fields: `@NotNull` — links profile to an existing User.
-
----
-
-### 3. Profile Creation Response DTO
-
-**New:** `ProfileResponseDto.java`
-
-| Field | Type | Notes |
-|-------|------|-------|
-| profileId | Long | the created profile's id |
-| userId | Long | the linked User's id |
-| name | String | profile name |
-| phone | String | null for restaurant |
-| address | String | null for agent/restaurant |
-| role | String | from User |
-
----
-
-### 4. Updated AuthResponseDto (registration response)
-
-Registration now only creates a User → response is simpler:
-
-| Field | Type | Notes |
-|-------|------|-------|
-| userId | Long | created User id |
-| email | String | |
-| role | String | CUSTOMER / RESTAURANT / DELIVERY_AGENT / ADMIN |
-
-Login response remains full (fetches profile at login time):
-
-| Field | Type | Notes |
-|-------|------|-------|
-| profileId | Long | null for ADMIN |
-| userId | Long | |
-| name | String | null for ADMIN |
-| email | String | |
-| role | String | |
-| phone | String | |
-| address | String | |
-
-> Use two separate response DTOs or add a factory method: `AuthResponseDto.forRegistration(user)` vs `AuthResponseDto.forLogin(user, profile)`.
-
----
-
-### 5. Service Changes
-
-#### `AuthServiceImpl`
-- `registerCustomer(CustomerRegisterDto)` → create User only, return `{userId, email, role}`
-- `registerRestaurant(RestaurantRegisterDto)` → create User only
-- `registerAgent(AgentRegisterDto)` → create User only
-- `registerAdmin(AdminRegisterDto)` → create User only (already correct)
-- `login(LoginRequestDto)` → unchanged (fetches profile for full response)
-
-#### `CustomerServiceImpl`
-- Add `createProfile(CustomerProfileCreateDto dto)` →
-  - Lookup `User` by `dto.getUserId()` — throw `ResourceNotFoundException` if missing
-  - Verify user role is `CUSTOMER` — throw `ConflictException` if wrong role
-  - Check if profile already exists for this userId — throw `ConflictException` if duplicate
-  - Save and return `ProfileResponseDto`
-
-#### `RestaurantServiceImpl`
-- Add `createProfile(RestaurantProfileCreateDto dto)` → same pattern
-
-#### `DeliveryAgentServiceImpl`
-- Add `createProfile(AgentProfileCreateDto dto)` → same pattern
-
----
-
-### 6. Controller Changes
-
-#### `AuthController` — registration returns user-only response
-No path changes. Just the response body is leaner (no profile fields).
-
-#### `CustomerController`
-```
-POST /api/customers   →  createProfile(@RequestBody CustomerProfileCreateDto)
-```
-Returns 201 + `ProfileResponseDto`
-
-#### `RestaurantController`
-```
-POST /api/restaurants   →  createProfile(@RequestBody RestaurantProfileCreateDto)
-```
-Returns 201 + `ProfileResponseDto`
-
-#### `DeliveryAgentController`
-```
-POST /api/agents   →  createProfile(@RequestBody AgentProfileCreateDto)
-```
-Returns 201 + `ProfileResponseDto`
-
----
-
-### 7. Updated API Flow (end-to-end example)
-
-```
-# Step 1: Create user account
-POST /auth/register/customer
-{ "email": "ram@gmail.com", "password": "ram123" }
-→ 201 { "userId": 1, "email": "ram@gmail.com", "role": "CUSTOMER" }
-
-# Step 2: Create customer profile
-POST /api/customers
-{ "userId": 1, "name": "Ram", "phone": "9876543210", "address": "Pune" }
-→ 201 { "profileId": 1, "userId": 1, "name": "Ram", "phone": "9876543210", "role": "CUSTOMER" }
-
-# Login (returns full data)
-POST /auth/login
-{ "email": "ram@gmail.com", "password": "ram123" }
-→ 200 { "profileId": 1, "userId": 1, "name": "Ram", "email": "ram@gmail.com", "role": "CUSTOMER", ... }
+### 1. `pom.xml` — add jjwt 0.12.x
+```xml
+<dependency><groupId>io.jsonwebtoken</groupId><artifactId>jjwt-api</artifactId><version>0.12.6</version></dependency>
+<dependency><groupId>io.jsonwebtoken</groupId><artifactId>jjwt-impl</artifactId><version>0.12.6</version><scope>runtime</scope></dependency>
+<dependency><groupId>io.jsonwebtoken</groupId><artifactId>jjwt-jackson</artifactId><version>0.12.6</version><scope>runtime</scope></dependency>
 ```
 
----
+### 2. `security/JwtConstants.java` — **separate file for JWT constants (per requirement)**
+- `SECRET` — Base64-encoded 256-bit HMAC secret (default in-file; overridable via property).
+- `EXPIRATION_MS = 3_600_000L` (1 hour).
+- `TOKEN_PREFIX = "Bearer "`.
+- `HEADER_NAME = "Authorization"`.
+- `CLAIM_ROLE = "role"`, `CLAIM_USER_ID = "userId"`.
 
-### 8. Files to Create
+### 3. `security/JwtUtil.java` — token generator/parser (`@Component`)
+- `generateToken(User user)` → JWT with `sub=email`, claims `role` + `userId`, `iat` + `exp = now + 1h`.
+- `extractEmail(token)`, `extractRole(token)`, `extractUserId(token)`, `isValid(token)`.
+- Reads secret + expiry from `@Value("${quickbite.jwt.secret:<default>}")` falling back to `JwtConstants`.
 
-| File | Purpose |
-|------|---------|
-| `dtos/CustomerProfileCreateDto.java` | profile creation request |
-| `dtos/RestaurantProfileCreateDto.java` | profile creation request |
-| `dtos/AgentProfileCreateDto.java` | profile creation request |
-| `dtos/ProfileResponseDto.java` | profile creation response |
+### 4. `security/JwtAuthFilter.java` — `OncePerRequestFilter` (`@Component`)
+- Reads `Authorization: Bearer ...`. If absent → continue chain (Spring handles 401 via entry point).
+- If present + valid → load `UserDetails` via `UserDetailsServiceImpl`, build `UsernamePasswordAuthenticationToken`, set on `SecurityContextHolder`.
+- If present + invalid/expired → leave context empty so Spring returns 401.
+- Skips `/auth/**` paths via `shouldNotFilter`.
 
-### 9. Files to Modify
+## Files to modify
 
-| File | Change |
-|------|--------|
-| `dtos/CustomerRegisterDto.java` | remove name, phone, address — keep email + password only |
-| `dtos/RestaurantRegisterDto.java` | remove restaurantName, city, cuisineType — keep email + password only |
-| `dtos/AgentRegisterDto.java` | remove name, phone — keep email + password only |
-| `dtos/AuthResponseDto.java` | split into registration (lean) vs login (full) response |
-| `service/AuthServiceImpl.java` | register methods create User only |
-| `service/CustomerServiceImpl.java` | add createProfile() |
-| `service/RestaurantServiceImpl.java` | add createProfile() |
-| `service/DeliveryAgentServiceImpl.java` | add createProfile() |
-| `controller/CustomerController.java` | add POST /api/customers |
-| `controller/RestaurantController.java` | add POST /api/restaurants |
-| `controller/DeliveryAgentController.java` | add POST /api/agents |
+### 5. `dtos/AuthResponseDto.java` — **add `token` field**
+Login response is the only DTO that needs the token. Other response DTOs (`RegistrationResponseDto`, `ProfileResponseDto`, etc.) intentionally **do not** carry tokens because:
+- Registration is two-step (user → profile); user has no profile yet at register time.
+- Profile creation requires an already-authenticated request, so the client already holds a token.
 
----
+Add `token` as the first field in the constructor + getter. Update `AuthServiceImpl.buildLoginResponse()` to pass the token into every branch (CUSTOMER, DELIVERY_AGENT, RESTAURANT, ADMIN).
 
-## 10. What Does NOT Change
+### 6. `service/AuthServiceImpl.java`
+- `@Autowired JwtUtil jwtUtil;`
+- In `login()`: after password check, `String token = jwtUtil.generateToken(user);` and thread it into `buildLoginResponse(user, token)`.
 
-- All QB-3 to QB-17 endpoints
-- `Order.java`, `MenuItem.java`, `OrderItem.java`
-- All JPQL queries
-- `SecurityConfig.java`, `UserDetailsServiceImpl.java`
-- `UserRole`, `UserRepository`, `*ProfileRepository` classes
-- `StanderedSuccessResponse`, `StanderedErrorResponse` (intentional spelling)
-- `CustomerSummary` projection, `GlobalExceptionHandler`
+### 7. `security/SecurityConfig.java`
+- Remove `httpBasic(Customizer.withDefaults())`.
+- `@Autowired JwtAuthFilter jwtAuthFilter;`
+- `.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)`
+- Add an `AuthenticationEntryPoint` bean that writes a `StanderedErrorResponse` JSON 401 (so unauthenticated calls return a consistent error shape).
+
+### 8. `application.properties` — optional overrides (no behavior change if absent):
+```
+quickbite.jwt.secret=<base64-256bit>
+quickbite.jwt.expiration-ms=3600000
+```
+`JwtConstants` provides safe defaults if these are missing.
+
+## Acceptance criteria
+1. `POST /auth/login` 200 response body contains `data.token` (JWT string) **plus** all existing fields.
+2. Hitting any non-`/auth/**` endpoint without `Authorization: Bearer <token>` → 401.
+3. Hitting with a valid token → endpoint executes; `@PreAuthorize("hasRole('CUSTOMER')")` etc. still works.
+4. After 1 hour, the same token → 401 (expired).
+5. Existing HTTP Basic auth header on requests no longer works — clients must switch to Bearer.
+
+## Out of scope
+- Refresh tokens / token revocation / blacklist.
+- Postman collection update (will flag in summary — you can request as a follow-up).
+- Renaming `AuthResponseDto` → `LoginResponseDto`.
+- Returning a token from `/auth/register/*` (registration is two-step; profile doesn't exist yet — login is the canonical mint point).
+
+## Confirm before I implement
+1. **Breaking change**: every existing Postman/API client using Basic auth will break and must switch to Bearer. OK?
+2. **Secret storage**: default Base64 secret hard-coded in `JwtConstants.java`, overridable via `application.properties`. Acceptable, or do you want the default to be a placeholder that forces a property override?
+3. **Token on register endpoints**: confirm we do **not** return a token from `/auth/register/*` (only from `/auth/login`).
