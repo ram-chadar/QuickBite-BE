@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,6 +29,8 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    // Never expose the BCrypt hash in any JSON response.
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -38,24 +42,32 @@ public class User implements UserDetails {
 
     public User() {}
 
+    // UserDetails getters below are for Spring Security only — hide them from
+    // Jackson so they don't pollute responses (and "username" is a duplicate of email).
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() { return email; }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() { return enabled != null && enabled; }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() { return true; }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() { return true; }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() { return true; }
 
     public Long getId() { return id; }

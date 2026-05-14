@@ -45,8 +45,11 @@ public class RestaurantProfile {
 
     private Boolean isOpen = true;
 
+    // Hidden from JSON so the User account (password hash, role flags) never
+    // leaks via /api/restaurants endpoints.
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     // Excluded from JSON to avoid N+1 on /api/restaurants list endpoint;
